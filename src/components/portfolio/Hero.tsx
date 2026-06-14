@@ -1,22 +1,23 @@
 import { motion } from "framer-motion";
+import { Link } from "@tanstack/react-router";
 
 export function Nav() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center bg-background/80 backdrop-blur-md border-b border-white/5">
-      <a href="#top" className="text-xl font-heading font-extrabold tracking-tighter italic">
+      <Link to="/" className="text-xl font-heading font-extrabold tracking-tighter italic">
         VIBE<span className="text-accent">_</span>LAB
-      </a>
+      </Link>
       <div className="hidden md:flex gap-8 text-sm font-medium tracking-wide uppercase">
-        <a href="#projects" className="hover:text-accent transition-colors">Work</a>
-        <a href="#services" className="hover:text-accent transition-colors">Services</a>
-        <a href="#philosophy" className="hover:text-accent transition-colors">Philosophy</a>
+        <Link to="/work" className="hover:text-accent transition-colors" activeProps={{ className: "text-accent" }}>Work</Link>
+        <Link to="/services" className="hover:text-accent transition-colors" activeProps={{ className: "text-accent" }}>Services</Link>
+        <Link to="/contact" className="hover:text-accent transition-colors" activeProps={{ className: "text-accent" }}>Contact</Link>
       </div>
-      <a
-        href="#contact"
+      <Link
+        to="/contact"
         className="px-5 py-2 border border-accent/30 text-accent text-xs font-bold uppercase tracking-widest hover:bg-accent hover:text-black transition-all"
       >
         Hire Me
-      </a>
+      </Link>
     </nav>
   );
 }
@@ -45,18 +46,18 @@ export function Hero() {
           <span className="text-white italic">Vibe Coding</span>—prioritizing speed, intuition, and high-performance DX.
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
-          <a
-            href="#contact"
+          <Link
+            to="/contact"
             className="px-8 py-4 bg-accent text-black font-bold uppercase tracking-tight text-base sm:text-lg hover:scale-[0.97] transition-transform text-center"
           >
             Book a Consultation
-          </a>
-          <a
-            href="#philosophy"
+          </Link>
+          <Link
+            to="/about"
             className="px-8 py-4 bg-white/5 border border-white/10 text-white font-bold uppercase tracking-tight text-base sm:text-lg hover:bg-white/10 transition-colors text-center"
           >
             View Manifest
-          </a>
+          </Link>
         </div>
       </motion.div>
     </section>
