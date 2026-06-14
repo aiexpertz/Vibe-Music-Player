@@ -19,7 +19,27 @@ const services = [
     description:
       "RAG-powered conversational agents that hold context, follow brand voice, and execute actual business logic.",
   },
+  {
+    code: "S_04",
+    title: "n8n Expert",
+    description:
+      "Production-grade n8n workflows wired into your stack — webhooks, queues, retries, and AI nodes that actually scale.",
+  },
+  {
+    code: "S_05",
+    title: "Vibe Coding Expert",
+    description:
+      "Ship features at terminal velocity using AI-native tooling — from prompt to deployed product in days, not quarters.",
+  },
+  {
+    code: "S_06",
+    title: "Custom Design Systems",
+    description:
+      "Cohesive token-driven design systems with Tailwind + shadcn, built for fast iteration and consistent brand fidelity.",
+  },
 ];
+
+const stack = ["n8n", "python", "lovable", "github", "Replit", "Bolt"];
 
 export function Services() {
   return (
@@ -30,18 +50,18 @@ export function Services() {
         </h2>
         <div className="h-px flex-1 bg-white/10 mb-2" />
         <span className="text-muted-foreground text-xs font-mono shrink-0">
-          [S_01 — S_03]
+          [S_01 — S_06]
         </span>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {services.map((s, i) => (
           <motion.div
             key={s.code}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, delay: i * 0.08 }}
+            transition={{ duration: 0.5, delay: i * 0.06 }}
             className="group p-8 bg-surface border border-white/10 hover:border-accent/40 hover:bg-white/[0.02] transition-all"
           >
             <div className="flex items-center justify-between mb-8">
@@ -56,6 +76,22 @@ export function Services() {
             <p className="text-muted-foreground text-sm leading-relaxed">{s.description}</p>
           </motion.div>
         ))}
+      </div>
+
+      <div className="mt-16 pt-10 border-t border-white/5">
+        <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground mb-5">
+          // STACK_TAGS
+        </div>
+        <div className="flex flex-wrap gap-3">
+          {stack.map((tag) => (
+            <span
+              key={tag}
+              className="px-4 py-2 border border-white/10 bg-surface text-xs font-mono text-white/80 hover:border-accent/50 hover:text-accent transition-colors"
+            >
+              #{tag}
+            </span>
+          ))}
+        </div>
       </div>
     </section>
   );
