@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import aetherImg from "@/assets/project-aether.jpg";
 import orchestratorImg from "@/assets/project-orchestrator.jpg";
@@ -12,7 +11,7 @@ type Project = {
   code: string;
 };
 
-const initialProjects: Project[] = [
+const projects: Project[] = [
   {
     name: "Project_Aether",
     tag: "Autonomous Sales Agent",
@@ -51,31 +50,7 @@ const initialProjects: Project[] = [
   },
 ];
 
-const morePlaceholders: Project[] = [
-  {
-    name: "Atlas_Flow",
-    tag: "n8n Automation Suite",
-    description:
-      "Self-healing n8n workflows orchestrating Stripe, HubSpot, and Notion for a 50-person ops team.",
-    image: orchestratorImg,
-    demo: "#",
-    code: "#",
-  },
-  {
-    name: "Nimbus_Vision",
-    tag: "Multimodal Agent",
-    description:
-      "Vision + voice agent for retail QA — flags shelf gaps and posts shift summaries in real time.",
-    image: aetherImg,
-    demo: "#",
-    code: "#",
-  },
-];
-
 export function Projects() {
-  const [showAll, setShowAll] = useState(false);
-  const visible = showAll ? [...initialProjects, ...morePlaceholders] : initialProjects;
-
   return (
     <section id="projects" className="py-24 px-6 max-w-7xl mx-auto">
       <div className="flex items-end mb-12 gap-4 sm:gap-8">
@@ -84,12 +59,12 @@ export function Projects() {
         </h2>
         <div className="h-px flex-1 bg-white/10 mb-2" />
         <span className="text-muted-foreground text-xs font-mono shrink-0">
-          [{String(visible.length).padStart(3, "0")} / {String(initialProjects.length + morePlaceholders.length).padStart(3, "0")}]
+          [001 — 004]
         </span>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
-        {visible.map((p, i) => (
+        {projects.map((p, i) => (
           <motion.div
             key={p.name}
             initial={{ opacity: 0, y: 20 }}
@@ -125,15 +100,6 @@ export function Projects() {
             </div>
           </motion.div>
         ))}
-      </div>
-
-      <div className="flex justify-center mt-16">
-        <button
-          onClick={() => setShowAll((v) => !v)}
-          className="px-8 py-4 border border-accent/40 text-accent font-bold uppercase tracking-widest text-xs hover:bg-accent hover:text-black transition-all"
-        >
-          {showAll ? "− Collapse Projects" : "+ Load More Projects"}
-        </button>
       </div>
     </section>
   );
