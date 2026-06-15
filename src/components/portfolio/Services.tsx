@@ -40,7 +40,7 @@ export function Services() {
             key={s.code}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
+            viewport={{ once: false, margin: "-60px" }}
             transition={{ duration: 0.5, delay: i * 0.08 }}
             className="group p-8 bg-surface border border-white/10 hover:border-accent/40 hover:bg-white/[0.02] transition-all"
           >

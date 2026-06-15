@@ -69,7 +69,7 @@ export function Projects() {
             key={p.name}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
+            viewport={{ once: false, margin: "-80px" }}
             transition={{ duration: 0.5, delay: (i % 2) * 0.1 }}
             className="group cursor-pointer"
           >

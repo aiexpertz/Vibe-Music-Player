@@ -8,7 +8,7 @@ export function Philosophy() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
+          viewport={{ once: false, margin: "-80px" }}
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-4xl md:text-5xl font-heading font-extrabold mb-8 italic">
@@ -43,7 +43,7 @@ export function Philosophy() {
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }}
           whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: "-80px" }}
+          viewport={{ once: false, margin: "-80px" }}
           transition={{ duration: 0.7 }}
           className="w-full aspect-[4/5] bg-background outline outline-1 -outline-offset-1 outline-white/5 overflow-hidden"
         >
