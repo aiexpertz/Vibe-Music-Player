@@ -3,7 +3,7 @@ import studioImg from "@/assets/creator-studio.jpg";
 
 export function Philosophy() {
   return (
-    <section id="philosophy" className="py-24 bg-surface border-y border-white/5">
+    <section id="philosophy" className="py-24 bg-surface border-y border-white/5 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
