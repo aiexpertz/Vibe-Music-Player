@@ -23,7 +23,7 @@ const services = [
 
 export function Services() {
   return (
-    <section id="services" className="py-24 px-6 max-w-7xl mx-auto">
+    <section id="services" className="py-24 px-6 max-w-7xl mx-auto scroll-mt-20">
       <div className="flex items-end mb-12 gap-4 sm:gap-8">
         <h2 className="text-2xl sm:text-3xl font-heading font-extrabold tracking-tight shrink-0">
           CORE_SERVICES
@@ -40,7 +40,7 @@ export function Services() {
             key={s.code}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
+            viewport={{ once: false, margin: "-60px" }}
             transition={{ duration: 0.5, delay: i * 0.08 }}
             className="group p-8 bg-surface border border-white/10 hover:border-accent/40 hover:bg-white/[0.02] transition-all"
           >

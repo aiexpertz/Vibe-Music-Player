@@ -1,5 +1,25 @@
 import { useState, type FormEvent } from "react";
+import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { Mail, Phone, Github, Linkedin, Instagram } from "lucide-react";
+
+const SOCIALS = [
+  {
+    label: "GITHUB",
+    href: "https://github.com/aiexpertz",
+    Icon: Github,
+  },
+  {
+    label: "LINKEDIN",
+    href: "https://www.linkedin.com/in/ammar-siddiqui-19849040a?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+    Icon: Linkedin,
+  },
+  {
+    label: "INSTAGRAM",
+    href: "https://www.instagram.com/ammaraiexpertz/",
+    Icon: Instagram,
+  },
+];
 
 export function Contact() {
   const [submitting, setSubmitting] = useState(false);
@@ -18,15 +38,74 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" className="py-24 px-6 max-w-3xl mx-auto text-center">
-      <h2 className="text-4xl md:text-5xl font-heading font-extrabold mb-4">
-        Ready to Automate?
-      </h2>
-      <p className="text-muted-foreground mb-12">
-        Let's build something that thinks for itself.
-      </p>
+    <section
+      id="contact"
+      className="py-24 px-6 max-w-5xl mx-auto scroll-mt-20"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, margin: "-80px" }}
+        transition={{ duration: 0.6 }}
+        className="text-center mb-12"
+      >
+        <h2 className="text-4xl md:text-5xl font-heading font-extrabold mb-4">
+          Ready to Automate?
+        </h2>
+        <p className="text-muted-foreground">
+          Let's build something that thinks for itself.
+        </p>
+      </motion.div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 text-left">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, margin: "-60px" }}
+        transition={{ duration: 0.5 }}
+        className="grid md:grid-cols-2 gap-4 mb-10"
+      >
+        <a
+          href="mailto:ammarsidaiexpert@gmail.com"
+          className="flex items-center gap-4 p-5 bg-surface border border-white/10 hover:border-accent/50 hover:bg-white/[0.02] transition-all group"
+        >
+          <div className="size-10 grid place-items-center bg-accent/10 border border-accent/20 shrink-0">
+            <Mail className="size-4 text-accent" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+              Email
+            </p>
+            <p className="text-sm font-semibold text-white truncate group-hover:text-accent transition-colors">
+              ammarsidaiexpert@gmail.com
+            </p>
+          </div>
+        </a>
+        <a
+          href="tel:+923147666278"
+          className="flex items-center gap-4 p-5 bg-surface border border-white/10 hover:border-accent/50 hover:bg-white/[0.02] transition-all group"
+        >
+          <div className="size-10 grid place-items-center bg-accent/10 border border-accent/20 shrink-0">
+            <Phone className="size-4 text-accent" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+              Phone
+            </p>
+            <p className="text-sm font-semibold text-white truncate group-hover:text-accent transition-colors">
+              +92 314 7666278
+            </p>
+          </div>
+        </a>
+      </motion.div>
+
+      <motion.form
+        onSubmit={handleSubmit}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, margin: "-60px" }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+        className="space-y-6 text-left"
+      >
         <div className="grid md:grid-cols-2 gap-6">
           <input
             type="text"
@@ -57,12 +136,21 @@ export function Contact() {
         >
           {submitting ? "Transmitting..." : "Initialize Project"}
         </button>
-      </form>
+      </motion.form>
 
       <div className="mt-16 pt-12 border-t border-white/5 flex justify-center gap-8 flex-wrap">
-        <a href="https://github.com" target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-accent transition-colors text-xs font-bold tracking-widest">GITHUB</a>
-        <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-accent transition-colors text-xs font-bold tracking-widest">LINKEDIN</a>
-        <a href="https://x.com" target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-accent transition-colors text-xs font-bold tracking-widest">X / TWITTER</a>
+        {SOCIALS.map(({ label, href, Icon }) => (
+          <a
+            key={label}
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 text-muted-foreground hover:text-accent transition-colors text-xs font-bold tracking-widest"
+          >
+            <Icon className="size-4" />
+            {label}
+          </a>
+        ))}
       </div>
     </section>
   );

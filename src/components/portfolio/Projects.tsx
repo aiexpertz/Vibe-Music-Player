@@ -52,7 +52,7 @@ const projects: Project[] = [
 
 export function Projects() {
   return (
-    <section id="projects" className="py-24 px-6 max-w-7xl mx-auto">
+    <section id="work" className="py-24 px-6 max-w-7xl mx-auto scroll-mt-20">
       <div className="flex items-end mb-12 gap-4 sm:gap-8">
         <h2 className="text-2xl sm:text-3xl font-heading font-extrabold tracking-tight shrink-0">
           SELECTED_DEPLOYMENTS
@@ -69,7 +69,7 @@ export function Projects() {
             key={p.name}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
+            viewport={{ once: false, margin: "-80px" }}
             transition={{ duration: 0.5, delay: (i % 2) * 0.1 }}
             className="group cursor-pointer"
           >
