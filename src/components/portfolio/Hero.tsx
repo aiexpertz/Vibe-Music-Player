@@ -3,13 +3,16 @@ import { motion } from "framer-motion";
 export function Nav() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center bg-background/80 backdrop-blur-md border-b border-white/5">
-      <a href="#top" className="text-xl font-heading font-extrabold tracking-tighter italic">
+      <a href="#home" className="text-xl font-heading font-extrabold tracking-tighter italic shrink-0">
         VIBE<span className="text-accent">_</span>LAB
       </a>
-      <div className="hidden md:flex gap-8 text-sm font-medium tracking-wide uppercase">
-        <a href="#projects" className="hover:text-accent transition-colors">Work</a>
+      <div className="hidden lg:flex gap-6 text-xs font-medium tracking-wide uppercase">
+        <a href="#home" className="hover:text-accent transition-colors">Home</a>
+        <a href="#work" className="hover:text-accent transition-colors">Work</a>
         <a href="#services" className="hover:text-accent transition-colors">Services</a>
         <a href="#philosophy" className="hover:text-accent transition-colors">Philosophy</a>
+        <a href="#signal" className="hover:text-accent transition-colors">Client Signal</a>
+        <a href="#contact" className="hover:text-accent transition-colors">Contact Us</a>
       </div>
       <a
         href="#contact"
@@ -23,7 +26,7 @@ export function Nav() {
 
 export function Hero() {
   return (
-    <section id="top" className="pt-40 pb-24 px-6 max-w-7xl mx-auto">
+    <section id="home" className="pt-40 pb-24 px-6 max-w-7xl mx-auto scroll-mt-20">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
