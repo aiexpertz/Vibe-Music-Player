@@ -160,13 +160,12 @@ export type SiteContentMap = {
 export async function fetchAllSiteContent(): Promise<SiteContentMap> {
   const { data } = await supabase.from("site_content").select("key,data");
   const map = { ...DEFAULTS } as SiteContentMap;
-  (data ?? []).forEach((row: { key: string; data: Record<string, unknown> }) => {
-    if ((SECTION_KEYS as readonly string[]).includes(row.key)) {
-      const k = row.key as SectionKey;
-      // shallow merge defaults + db data so missing keys stay defaulted
-      // @ts-expect-error generic merge
-      map[k] = { ...DEFAULTS[k], ...row.data };
-    }
+  (data ?? []).forEach((row) => {
+    if (!(SECTION_KEYS as readonly string[]).includes(row.key)) return;
+    const k = row.key as SectionKey;
+    const payload = (row.data && typeof row.data === "object" ? row.data : {}) as Record<string, unknown>;
+    // @ts-expect-error generic merge of partial DB data over defaults
+    map[k] = { ...DEFAULTS[k], ...payload };
   });
   return map;
 }
