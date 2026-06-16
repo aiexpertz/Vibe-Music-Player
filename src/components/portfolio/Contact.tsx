@@ -41,11 +41,9 @@ export function Contact() {
         className="text-center mb-12"
       >
         <h2 className="text-4xl md:text-5xl font-heading font-extrabold mb-4">
-          Ready to Automate?
+          {c.heading}
         </h2>
-        <p className="text-muted-foreground">
-          Let's build something that thinks for itself.
-        </p>
+        <p className="text-muted-foreground">{c.subheading}</p>
       </motion.div>
 
       <motion.div
@@ -56,7 +54,7 @@ export function Contact() {
         className="grid md:grid-cols-2 gap-4 mb-10"
       >
         <a
-          href="mailto:ammarsidaiexpert@gmail.com"
+          href={`mailto:${c.email}`}
           className="flex items-center gap-4 p-5 bg-surface border border-white/10 hover:border-accent/50 hover:bg-white/[0.02] transition-all group"
         >
           <div className="size-10 grid place-items-center bg-accent/10 border border-accent/20 shrink-0">
@@ -67,12 +65,12 @@ export function Contact() {
               Email
             </p>
             <p className="text-sm font-semibold text-white truncate group-hover:text-accent transition-colors">
-              ammarsidaiexpert@gmail.com
+              {c.email}
             </p>
           </div>
         </a>
         <a
-          href="tel:+923147666278"
+          href={`tel:${c.phone.replace(/\s+/g, "")}`}
           className="flex items-center gap-4 p-5 bg-surface border border-white/10 hover:border-accent/50 hover:bg-white/[0.02] transition-all group"
         >
           <div className="size-10 grid place-items-center bg-accent/10 border border-accent/20 shrink-0">
@@ -83,11 +81,12 @@ export function Contact() {
               Phone
             </p>
             <p className="text-sm font-semibold text-white truncate group-hover:text-accent transition-colors">
-              +92 314 7666278
+              {c.phone}
             </p>
           </div>
         </a>
       </motion.div>
+
 
       <motion.form
         onSubmit={handleSubmit}
