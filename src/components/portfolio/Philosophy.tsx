@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import studioImg from "@/assets/creator-studio.jpg";
+import { useSection } from "@/lib/site-content";
 
 export function Philosophy() {
+  const p = useSection("philosophy");
   return (
     <section id="philosophy" className="py-24 bg-surface border-y border-white/5 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
@@ -12,30 +14,22 @@ export function Philosophy() {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-4xl md:text-5xl font-heading font-extrabold mb-8 italic">
-            The Vibe Coding Philosophy
+            {p.heading}
           </h2>
-          <div className="space-y-6 text-muted-foreground leading-relaxed text-lg">
-            <p>
-              Traditional dev is too slow.{" "}
-              <span className="text-white font-medium">Vibe Coding</span> is the art of using AI to
-              bridge the gap between imagination and production at terminal velocity.
-            </p>
-            <p>
-              I build systems that don't just follow logic—they anticipate user intent. Cleaner
-              stacks, faster shipping, zero friction.
-            </p>
+          <div className="space-y-6 text-muted-foreground leading-relaxed text-lg whitespace-pre-line">
+            {p.body}
           </div>
           <div className="grid grid-cols-2 gap-4 pt-8 max-w-md">
             <div className="p-5 border border-white/10 bg-background">
-              <div className="text-accent font-extrabold text-3xl">10×</div>
+              <div className="text-accent font-extrabold text-3xl">{p.stat1_value}</div>
               <div className="text-[10px] uppercase tracking-widest mt-2 text-muted-foreground">
-                Deployment Speed
+                {p.stat1_label}
               </div>
             </div>
             <div className="p-5 border border-white/10 bg-background">
-              <div className="text-accent font-extrabold text-3xl">99%</div>
+              <div className="text-accent font-extrabold text-3xl">{p.stat2_value}</div>
               <div className="text-[10px] uppercase tracking-widest mt-2 text-muted-foreground">
-                Uptime SLA
+                {p.stat2_label}
               </div>
             </div>
           </div>
@@ -48,8 +42,8 @@ export function Philosophy() {
           className="w-full aspect-[4/5] bg-background outline outline-1 -outline-offset-1 outline-white/5 overflow-hidden"
         >
           <img
-            src={studioImg}
-            alt="Creator studio — mechanical keyboard and curved monitor"
+            src={p.image_url || studioImg}
+            alt="Creator studio"
             loading="lazy"
             width={1024}
             height={1280}
