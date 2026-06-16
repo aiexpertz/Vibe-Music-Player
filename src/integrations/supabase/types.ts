@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           created_at: string
           description: string
+          display_order: number
           id: string
           image_url: string | null
           technologies: string[]
@@ -27,6 +28,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description: string
+          display_order?: number
           id?: string
           image_url?: string | null
           technologies?: string[]
@@ -36,11 +38,30 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string
+          display_order?: number
           id?: string
           image_url?: string | null
           technologies?: string[]
           title?: string
           youtube_url?: string | null
+        }
+        Relationships: []
+      }
+      site_content: {
+        Row: {
+          data: Json
+          key: string
+          updated_at: string
+        }
+        Insert: {
+          data?: Json
+          key: string
+          updated_at?: string
+        }
+        Update: {
+          data?: Json
+          key?: string
+          updated_at?: string
         }
         Relationships: []
       }
