@@ -2,27 +2,17 @@ import { useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Mail, Phone, Github, Linkedin, Instagram } from "lucide-react";
-
-const SOCIALS = [
-  {
-    label: "GITHUB",
-    href: "https://github.com/aiexpertz",
-    Icon: Github,
-  },
-  {
-    label: "LINKEDIN",
-    href: "https://www.linkedin.com/in/ammar-siddiqui-19849040a?utm_source=share_via&utm_content=profile&utm_medium=member_android",
-    Icon: Linkedin,
-  },
-  {
-    label: "INSTAGRAM",
-    href: "https://www.instagram.com/ammaraiexpertz/",
-    Icon: Instagram,
-  },
-];
+import { useSection } from "@/lib/site-content";
 
 export function Contact() {
+  const c = useSection("contact");
   const [submitting, setSubmitting] = useState(false);
+
+  const SOCIALS = [
+    { label: "GITHUB", href: c.github_url, Icon: Github },
+    { label: "LINKEDIN", href: c.linkedin_url, Icon: Linkedin },
+    { label: "INSTAGRAM", href: c.instagram_url, Icon: Instagram },
+  ];
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -36,6 +26,7 @@ export function Contact() {
       setSubmitting(false);
     }, 600);
   }
+
 
   return (
     <section
