@@ -68,6 +68,7 @@ export function Projects() {
     supabase
       .from("projects")
       .select("*")
+      .order("display_order", { ascending: true })
       .order("created_at", { ascending: false })
       .then(({ data }) => {
         if (!active) return;
