@@ -53,6 +53,7 @@ export function Philosophy() {
             height={1280}
             className="w-full h-full object-cover"
           />
+          </Tilt3D>
         </motion.div>
       </div>
     </section>
