@@ -38,12 +38,13 @@ export function Philosophy() {
           </div>
         </motion.div>
         <motion.div
-          initial={{ opacity: 0, scale: 0.97 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, scale: 0.92, rotateY: 12 }}
+          whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
           viewport={{ once: false, margin: "-80px" }}
-          transition={{ duration: 0.7 }}
-          className="w-full aspect-[4/5] bg-background outline outline-1 -outline-offset-1 outline-white/5 overflow-hidden"
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          style={{ transformStyle: "preserve-3d" }}
         >
+          <Tilt3D max={8} className="w-full aspect-[4/5] bg-background outline outline-1 -outline-offset-1 outline-white/5 overflow-hidden shadow-[0_30px_80px_-20px_rgba(204,255,0,0.2)]">
           <img
             src={p.image_url || studioImg}
             alt="Creator studio"
