@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import studioImg from "@/assets/creator-studio.jpg";
 import { useSection } from "@/lib/site-content";
+import { Tilt3D } from "./Tilt3D";
 
 export function Philosophy() {
   const p = useSection("philosophy");
