@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import aetherImg from "@/assets/project-aether.jpg";
 import orchestratorImg from "@/assets/project-orchestrator.jpg";
+import { Tilt3D } from "./Tilt3D";
 
 type DbProject = {
   id: string;
