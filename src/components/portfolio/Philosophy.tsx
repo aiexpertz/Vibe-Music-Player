@@ -10,10 +10,11 @@ export function Philosophy() {
       <div className="absolute inset-0 -z-0 opacity-30 pointer-events-none [background:radial-gradient(circle_at_20%_30%,rgba(204,255,0,0.08),transparent_40%),radial-gradient(circle_at_80%_70%,rgba(204,255,0,0.06),transparent_45%)]" />
       <div className="relative max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center" style={{ perspective: 1400 }}>
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 40, rotateX: -8 }}
+          whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
           viewport={{ once: false, margin: "-80px" }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          style={{ transformStyle: "preserve-3d" }}
         >
           <h2 className="text-4xl md:text-5xl font-heading font-extrabold mb-8 italic">
             {p.heading}
