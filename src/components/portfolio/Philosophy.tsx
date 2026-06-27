@@ -1,17 +1,20 @@
 import { motion } from "framer-motion";
 import studioImg from "@/assets/creator-studio.jpg";
 import { useSection } from "@/lib/site-content";
+import { Tilt3D } from "./Tilt3D";
 
 export function Philosophy() {
   const p = useSection("philosophy");
   return (
-    <section id="philosophy" className="py-24 bg-surface border-y border-white/5 scroll-mt-20">
-      <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+    <section id="philosophy" className="relative py-24 bg-surface border-y border-white/5 scroll-mt-20 overflow-hidden">
+      <div className="absolute inset-0 -z-0 opacity-30 pointer-events-none [background:radial-gradient(circle_at_20%_30%,rgba(204,255,0,0.08),transparent_40%),radial-gradient(circle_at_80%_70%,rgba(204,255,0,0.06),transparent_45%)]" />
+      <div className="relative max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center" style={{ perspective: 1400 }}>
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 40, rotateX: -8 }}
+          whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
           viewport={{ once: false, margin: "-80px" }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          style={{ transformStyle: "preserve-3d" }}
         >
           <h2 className="text-4xl md:text-5xl font-heading font-extrabold mb-8 italic">
             {p.heading}
@@ -35,12 +38,13 @@ export function Philosophy() {
           </div>
         </motion.div>
         <motion.div
-          initial={{ opacity: 0, scale: 0.97 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, scale: 0.92, rotateY: 12 }}
+          whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
           viewport={{ once: false, margin: "-80px" }}
-          transition={{ duration: 0.7 }}
-          className="w-full aspect-[4/5] bg-background outline outline-1 -outline-offset-1 outline-white/5 overflow-hidden"
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          style={{ transformStyle: "preserve-3d" }}
         >
+          <Tilt3D max={8} className="w-full aspect-[4/5] bg-background outline outline-1 -outline-offset-1 outline-white/5 overflow-hidden shadow-[0_30px_80px_-20px_rgba(204,255,0,0.2)]">
           <img
             src={p.image_url || studioImg}
             alt="Creator studio"
@@ -49,6 +53,7 @@ export function Philosophy() {
             height={1280}
             className="w-full h-full object-cover"
           />
+          </Tilt3D>
         </motion.div>
       </div>
     </section>
