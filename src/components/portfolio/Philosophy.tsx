@@ -6,8 +6,9 @@ import { Tilt3D } from "./Tilt3D";
 export function Philosophy() {
   const p = useSection("philosophy");
   return (
-    <section id="philosophy" className="py-24 bg-surface border-y border-white/5 scroll-mt-20">
-      <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+    <section id="philosophy" className="relative py-24 bg-surface border-y border-white/5 scroll-mt-20 overflow-hidden">
+      <div className="absolute inset-0 -z-0 opacity-30 pointer-events-none [background:radial-gradient(circle_at_20%_30%,rgba(204,255,0,0.08),transparent_40%),radial-gradient(circle_at_80%_70%,rgba(204,255,0,0.06),transparent_45%)]" />
+      <div className="relative max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center" style={{ perspective: 1400 }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
