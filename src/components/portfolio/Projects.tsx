@@ -114,36 +114,39 @@ export function Projects() {
           return (
             <motion.div
               key={p.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 30, rotateX: -10 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
               viewport={{ once: false, margin: "-80px" }}
-              transition={{ duration: 0.5, delay: (i % 2) * 0.1 }}
+              transition={{ duration: 0.6, delay: (i % 2) * 0.1 }}
+              style={{ perspective: 1200 }}
               className="group"
             >
-              <div className="relative w-full aspect-video bg-surface outline outline-1 -outline-offset-1 outline-white/10 mb-6 group-hover:outline-accent/50 transition-all overflow-hidden">
-                {embed ? (
-                  <iframe
-                    src={embed}
-                    title={p.name}
-                    loading="lazy"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full"
-                  />
-                ) : (
-                  <img
-                    src={p.image}
-                    alt={`${p.name} mockup`}
-                    loading="lazy"
-                    width={1280}
-                    height={800}
-                    className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
-                  />
-                )}
-                <span className="absolute top-3 left-3 text-[10px] font-medium uppercase tracking-[0.15em] text-accent bg-background/70 px-2 py-1">
-                  {p.tag}
-                </span>
-              </div>
+              <Tilt3D max={10}>
+                <div className="relative w-full aspect-video bg-surface outline outline-1 -outline-offset-1 outline-white/10 mb-6 group-hover:outline-accent/50 transition-all overflow-hidden shadow-[0_20px_60px_-20px_rgba(204,255,0,0.15)]">
+                  {embed ? (
+                    <iframe
+                      src={embed}
+                      title={p.name}
+                      loading="lazy"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full"
+                    />
+                  ) : (
+                    <img
+                      src={p.image}
+                      alt={`${p.name} mockup`}
+                      loading="lazy"
+                      width={1280}
+                      height={800}
+                      className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
+                    />
+                  )}
+                  <span className="absolute top-3 left-3 text-[10px] font-medium uppercase tracking-[0.15em] text-accent bg-background/70 px-2 py-1">
+                    {p.tag}
+                  </span>
+                </div>
+              </Tilt3D>
               <h3 className="text-xl font-heading font-semibold mb-2 group-hover:text-accent transition-colors">
                 {p.name}
               </h3>
