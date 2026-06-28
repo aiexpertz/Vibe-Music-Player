@@ -10,30 +10,33 @@ export function Testimonials() {
           {heading}
         </h2>
         <div className="h-px flex-1 bg-white/10 mb-2" />
-        <span className="text-muted-foreground text-xs font-mono shrink-0">[ TRUST ]</span>
       </div>
-      <div className="grid md:grid-cols-3 gap-6" style={{ perspective: 1200 }}>
+      <div className="grid md:grid-cols-3 gap-6">
         {items.map((t, i) => (
           <motion.div
             key={`${t.name}-${i}`}
-            initial={{ opacity: 0, y: 40, rotateX: -10 }}
-            whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, margin: "-60px" }}
             transition={{ duration: 0.6, delay: i * 0.1 }}
-            whileHover={{
-              translateY: -8,
-              rotateX: 5,
-              rotateY: -4,
-              transition: { duration: 0.3 },
-            }}
-            style={{ transformStyle: "preserve-3d" }}
-            className="p-8 bg-surface border border-white/10 hover:border-accent/40 hover:shadow-[0_25px_60px_-20px_rgba(204,255,0,0.3)] transition-shadow"
+            className="group h-64 [perspective:1400px]"
           >
-            <div className="text-accent text-3xl font-heading mb-4 leading-none">"</div>
-            <p className="text-white/90 italic mb-8 leading-relaxed">{t.quote}</p>
-            <div className="pt-4 border-t border-white/10">
-              <p className="font-bold text-sm">{t.name}</p>
-              <p className="text-xs text-muted-foreground mt-1">{t.role}</p>
+            <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+              {/* FRONT */}
+              <div className="absolute inset-0 [backface-visibility:hidden] p-8 bg-surface border border-white/10 flex flex-col justify-between shadow-[0_20px_50px_-20px_rgba(204,255,0,0.2)]">
+                <div className="text-accent text-4xl font-heading leading-none">"</div>
+                <div>
+                  <p className="font-bold text-base">{t.name}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t.role}</p>
+                  <p className="text-[10px] font-mono uppercase tracking-widest text-accent mt-4">
+                    Hover to read →
+                  </p>
+                </div>
+              </div>
+              {/* BACK */}
+              <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] p-8 bg-surface border border-accent/40 flex items-center shadow-[0_25px_60px_-20px_rgba(204,255,0,0.45)]">
+                <p className="text-white/90 italic leading-relaxed text-sm">{t.quote}</p>
+              </div>
             </div>
           </motion.div>
         ))}

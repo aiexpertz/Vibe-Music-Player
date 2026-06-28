@@ -10,9 +10,6 @@ export function Services() {
           {heading}
         </h2>
         <div className="h-px flex-1 bg-white/10 mb-2" />
-        <span className="text-muted-foreground text-xs font-mono shrink-0">
-          [{items[0]?.code ?? "—"} — {items[items.length - 1]?.code ?? "—"}]
-        </span>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6" style={{ perspective: 1200 }}>
@@ -24,20 +21,20 @@ export function Services() {
             viewport={{ once: false, margin: "-60px" }}
             transition={{ duration: 0.6, delay: i * 0.08 }}
             whileHover={{
-              translateY: -6,
-              rotateX: 4,
-              rotateY: 4,
-              scale: 1.02,
+              translateY: -10,
+              rotateX: 6,
+              rotateY: 6,
+              scale: 1.03,
               transition: { duration: 0.25 },
             }}
-            style={{ transformStyle: "preserve-3d" }}
-            className="group p-8 bg-surface border border-white/10 hover:border-accent/40 hover:bg-white/[0.02] hover:shadow-[0_20px_60px_-15px_rgba(204,255,0,0.25)] transition-shadow"
+            style={{
+              transformStyle: "preserve-3d",
+              animation: `float-pill 6s ease-in-out ${i * 0.7}s infinite`,
+            }}
+            className="group p-8 bg-surface border border-white/10 hover:border-accent/60 hover:bg-white/[0.02] hover:shadow-[0_25px_70px_-15px_rgba(204,255,0,0.45)] transition-shadow"
           >
-            <div className="flex items-center justify-between mb-8">
-              <div className="size-3 bg-accent rounded-full shadow-[0_0_12px_var(--color-accent)] group-hover:shadow-[0_0_24px_var(--color-accent)] transition-shadow" />
-              <span className="font-mono text-[10px] text-muted-foreground tracking-widest">
-                {s.code}
-              </span>
+            <div className="flex items-center mb-8">
+              <div className="size-3 bg-accent rounded-full shadow-[0_0_12px_var(--color-accent)] group-hover:shadow-[0_0_28px_var(--color-accent)] transition-shadow" />
             </div>
             <h3 className="text-xl font-heading font-semibold mb-3 group-hover:text-accent transition-colors">
               {s.title}
