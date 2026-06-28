@@ -70,7 +70,9 @@ export function Contact() {
           </div>
         </a>
         <a
-          href={`tel:${c.phone.replace(/\s+/g, "")}`}
+          href={`https://wa.me/${c.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent("Hi, I'm interested in your services")}`}
+          target="_blank"
+          rel="noreferrer"
           className="flex items-center gap-4 p-5 bg-surface border border-white/10 hover:border-accent/50 hover:bg-white/[0.02] transition-all group"
         >
           <div className="size-10 grid place-items-center bg-accent/10 border border-accent/20 shrink-0">
