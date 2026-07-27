@@ -685,11 +685,14 @@ function WorkManager() {
   const [loading, setLoading] = useState(true);
 
   const [submitting, setSubmitting] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [existingImage, setExistingImage] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [techs, setTechs] = useState("");
   const [youtube, setYoutube] = useState("");
   const [file, setFile] = useState<File | null>(null);
+
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
@@ -731,27 +734,61 @@ function WorkManager() {
         imageUrl = signed.signedUrl;
       }
       const technologies = techs.split(",").map((t) => t.trim()).filter(Boolean);
-      const nextOrder = projects.length;
-      const { error } = await supabase.from("projects").insert({
-        title,
-        description,
-        technologies,
-        youtube_url: youtube || null,
-        image_url: imageUrl,
-        display_order: nextOrder,
-      });
-      if (error) throw error;
-      toast.success("Project published");
-      setTitle(""); setDescription(""); setTechs(""); setYoutube(""); setFile(null);
-      const el = document.getElementById("file-input") as HTMLInputElement | null;
-      if (el) el.value = "";
+      if (editingId) {
+        const { error } = await supabase
+          .from("projects")
+          .update({
+            title,
+            description,
+            technologies,
+            youtube_url: youtube || null,
+            ...(imageUrl ? { image_url: imageUrl } : {}),
+          })
+          .eq("id", editingId);
+        if (error) throw error;
+        toast.success("Project updated");
+      } else {
+        const { error } = await supabase.from("projects").insert({
+          title,
+          description,
+          technologies,
+          youtube_url: youtube || null,
+          image_url: imageUrl,
+          display_order: projects.length,
+        });
+        if (error) throw error;
+        toast.success("Project published");
+      }
+      resetForm();
       load();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Publish failed");
+      toast.error(err instanceof Error ? err.message : "Save failed");
     } finally {
       setSubmitting(false);
     }
   }
+
+  function resetForm() {
+    setEditingId(null);
+    setExistingImage(null);
+    setTitle(""); setDescription(""); setTechs(""); setYoutube(""); setFile(null);
+    const el = document.getElementById("file-input") as HTMLInputElement | null;
+    if (el) el.value = "";
+  }
+
+  function onEdit(p: Project) {
+    setEditingId(p.id);
+    setExistingImage(p.image_url ?? null);
+    setTitle(p.title);
+    setDescription(p.description);
+    setTechs((p.technologies ?? []).join(", "));
+    setYoutube(p.youtube_url ?? "");
+    setFile(null);
+    const el = document.getElementById("file-input") as HTMLInputElement | null;
+    if (el) el.value = "";
+    document.getElementById("project-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
 
   async function onDelete(id: string) {
     if (!confirm("Delete this project?")) return;
@@ -781,14 +818,17 @@ function WorkManager() {
   return (
     <div className="space-y-10">
       <motion.section
+        id="project-form"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="border border-white/10 bg-surface/60 backdrop-blur p-8"
+        className="border border-white/10 bg-surface/60 backdrop-blur p-8 scroll-mt-24"
       >
         <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-accent mb-2">
-          // new_deployment
+          // {editingId ? "edit_deployment" : "new_deployment"}
         </p>
-        <h2 className="text-2xl font-heading font-extrabold mb-6">Publish a Project</h2>
+        <h2 className="text-2xl font-heading font-extrabold mb-6">
+          {editingId ? "Edit Project" : "Publish a Project"}
+        </h2>
         <form onSubmit={onSubmit} className="grid gap-4">
           <Field label="PROJECT TITLE">
             <input required value={title} onChange={(e) => setTitle(e.target.value)} className={inputCls} />
@@ -803,19 +843,43 @@ function WorkManager() {
             <input type="url" value={youtube} onChange={(e) => setYoutube(e.target.value)} placeholder="https://www.youtube.com/watch?v=…" className={inputCls} />
           </Field>
           <Field label="PROJECT SCREENSHOT">
-            <input
-              id="file-input"
-              type="file"
-              accept="image/*"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-              className="w-full text-sm file:bg-accent file:text-black file:border-0 file:px-3 file:py-2 file:mr-3 file:font-bold file:uppercase file:tracking-widest file:text-xs file:cursor-pointer"
-            />
+            <div className="grid gap-2">
+              {editingId && existingImage && (
+                <div className="flex items-center gap-3">
+                  <img src={existingImage} alt="Current screenshot" className="w-24 h-16 object-cover bg-black border border-white/10" />
+                  <span className="text-xs text-muted-foreground font-mono">
+                    current — upload a new file to replace it
+                  </span>
+                </div>
+              )}
+              <input
+                id="file-input"
+                type="file"
+                accept="image/*"
+                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                className="w-full text-sm file:bg-accent file:text-black file:border-0 file:px-3 file:py-2 file:mr-3 file:font-bold file:uppercase file:tracking-widest file:text-xs file:cursor-pointer"
+              />
+            </div>
           </Field>
-          <button type="submit" disabled={submitting} className={primaryBtn}>
-            {submitting ? "Publishing…" : "Publish Project →"}
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <button type="submit" disabled={submitting} className={primaryBtn}>
+              {submitting
+                ? editingId ? "Saving…" : "Publishing…"
+                : editingId ? "Save Changes →" : "Publish Project →"}
+            </button>
+            {editingId && (
+              <button
+                type="button"
+                onClick={resetForm}
+                className="px-5 py-3 text-xs font-bold uppercase tracking-widest border border-white/20 text-muted-foreground hover:text-white hover:border-white/40 transition-colors"
+              >
+                Cancel
+              </button>
+            )}
+          </div>
         </form>
       </motion.section>
+
 
       <section>
         <div className="flex items-end mb-6 gap-4">
@@ -839,8 +903,9 @@ function WorkManager() {
             <SortableContext items={projects.map((p) => p.id)} strategy={verticalListSortingStrategy}>
               <div className="grid gap-3">
                 {projects.map((p) => (
-                  <SortableProjectRow key={p.id} project={p} onDelete={onDelete} />
+                  <SortableProjectRow key={p.id} project={p} onDelete={onDelete} onEdit={onEdit} editing={editingId === p.id} />
                 ))}
+
               </div>
             </SortableContext>
           </DndContext>
@@ -850,7 +915,17 @@ function WorkManager() {
   );
 }
 
-function SortableProjectRow({ project: p, onDelete }: { project: Project; onDelete: (id: string) => void }) {
+function SortableProjectRow({
+  project: p,
+  onDelete,
+  onEdit,
+  editing,
+}: {
+  project: Project;
+  onDelete: (id: string) => void;
+  onEdit: (p: Project) => void;
+  editing: boolean;
+}) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: p.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -861,8 +936,9 @@ function SortableProjectRow({ project: p, onDelete }: { project: Project; onDele
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-4 border border-white/10 bg-surface/40 p-4 hover:border-accent/30 transition-colors"
+      className={`flex items-center gap-4 border bg-surface/40 p-4 transition-colors ${editing ? "border-accent/60" : "border-white/10 hover:border-accent/30"}`}
     >
+
       <button
         {...attributes}
         {...listeners}
@@ -885,12 +961,20 @@ function SortableProjectRow({ project: p, onDelete }: { project: Project; onDele
         #{(p.display_order ?? 0).toString().padStart(2, "0")}
       </span>
       <button
+        onClick={() => onEdit(p)}
+        className="text-xs font-bold uppercase tracking-widest text-accent border border-accent/40 px-3 py-2 hover:bg-accent hover:text-black transition-colors"
+        type="button"
+      >
+        Edit
+      </button>
+      <button
         onClick={() => onDelete(p.id)}
         className="text-xs font-bold uppercase tracking-widest text-red-400 hover:text-red-300 border border-red-500/30 px-3 py-2 hover:bg-red-500/10 transition-colors"
         type="button"
       >
         Delete
       </button>
+
     </div>
   );
 }
