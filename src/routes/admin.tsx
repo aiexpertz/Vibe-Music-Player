@@ -903,8 +903,9 @@ function WorkManager() {
             <SortableContext items={projects.map((p) => p.id)} strategy={verticalListSortingStrategy}>
               <div className="grid gap-3">
                 {projects.map((p) => (
-                  <SortableProjectRow key={p.id} project={p} onDelete={onDelete} />
+                  <SortableProjectRow key={p.id} project={p} onDelete={onDelete} onEdit={onEdit} editing={editingId === p.id} />
                 ))}
+
               </div>
             </SortableContext>
           </DndContext>
