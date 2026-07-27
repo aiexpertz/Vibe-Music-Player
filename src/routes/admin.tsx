@@ -818,14 +818,17 @@ function WorkManager() {
   return (
     <div className="space-y-10">
       <motion.section
+        id="project-form"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="border border-white/10 bg-surface/60 backdrop-blur p-8"
+        className="border border-white/10 bg-surface/60 backdrop-blur p-8 scroll-mt-24"
       >
         <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-accent mb-2">
-          // new_deployment
+          // {editingId ? "edit_deployment" : "new_deployment"}
         </p>
-        <h2 className="text-2xl font-heading font-extrabold mb-6">Publish a Project</h2>
+        <h2 className="text-2xl font-heading font-extrabold mb-6">
+          {editingId ? "Edit Project" : "Publish a Project"}
+        </h2>
         <form onSubmit={onSubmit} className="grid gap-4">
           <Field label="PROJECT TITLE">
             <input required value={title} onChange={(e) => setTitle(e.target.value)} className={inputCls} />
@@ -840,19 +843,43 @@ function WorkManager() {
             <input type="url" value={youtube} onChange={(e) => setYoutube(e.target.value)} placeholder="https://www.youtube.com/watch?v=…" className={inputCls} />
           </Field>
           <Field label="PROJECT SCREENSHOT">
-            <input
-              id="file-input"
-              type="file"
-              accept="image/*"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-              className="w-full text-sm file:bg-accent file:text-black file:border-0 file:px-3 file:py-2 file:mr-3 file:font-bold file:uppercase file:tracking-widest file:text-xs file:cursor-pointer"
-            />
+            <div className="grid gap-2">
+              {editingId && existingImage && (
+                <div className="flex items-center gap-3">
+                  <img src={existingImage} alt="Current screenshot" className="w-24 h-16 object-cover bg-black border border-white/10" />
+                  <span className="text-xs text-muted-foreground font-mono">
+                    current — upload a new file to replace it
+                  </span>
+                </div>
+              )}
+              <input
+                id="file-input"
+                type="file"
+                accept="image/*"
+                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                className="w-full text-sm file:bg-accent file:text-black file:border-0 file:px-3 file:py-2 file:mr-3 file:font-bold file:uppercase file:tracking-widest file:text-xs file:cursor-pointer"
+              />
+            </div>
           </Field>
-          <button type="submit" disabled={submitting} className={primaryBtn}>
-            {submitting ? "Publishing…" : "Publish Project →"}
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <button type="submit" disabled={submitting} className={primaryBtn}>
+              {submitting
+                ? editingId ? "Saving…" : "Publishing…"
+                : editingId ? "Save Changes →" : "Publish Project →"}
+            </button>
+            {editingId && (
+              <button
+                type="button"
+                onClick={resetForm}
+                className="px-5 py-3 text-xs font-bold uppercase tracking-widest border border-white/20 text-muted-foreground hover:text-white hover:border-white/40 transition-colors"
+              >
+                Cancel
+              </button>
+            )}
+          </div>
         </form>
       </motion.section>
+
 
       <section>
         <div className="flex items-end mb-6 gap-4">
