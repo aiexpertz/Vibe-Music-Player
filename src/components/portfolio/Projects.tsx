@@ -1,6 +1,29 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+function toYouTubeEmbed(url: string): string | null {
+  try {
+    const u = new URL(url.trim());
+    let id = "";
+    if (u.hostname.includes("youtu.be")) id = u.pathname.slice(1);
+    else if (u.pathname.startsWith("/embed/")) id = u.pathname.split("/")[2];
+    else if (u.pathname.startsWith("/shorts/")) id = u.pathname.split("/")[2];
+    else id = u.searchParams.get("v") ?? "";
+    if (!id) return null;
+    const t = u.searchParams.get("t") ?? u.searchParams.get("start");
+    const start = t ? `&start=${parseInt(t, 10) || 0}` : "";
+    return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0${start}`;
+  } catch {
+    return null;
+  }
+}
 import aetherImg from "@/assets/project-aether.jpg";
 import orchestratorImg from "@/assets/project-orchestrator.jpg";
 
@@ -51,6 +74,8 @@ const fallback: DisplayProject[] = [
 
 export function Projects() {
   const [items, setItems] = useState<DisplayProject[] | null>(null);
+  const [active, setActive] = useState<DisplayProject | null>(null);
+  const embedUrl = active?.youtube ? toYouTubeEmbed(active.youtube) : null;
 
   useEffect(() => {
     let active = true;
@@ -141,20 +166,44 @@ export function Projects() {
                   </div>
                 </div>
                 {p.youtube && (
-                  <a
-                    href={p.youtube}
-                    target="_blank"
-                    rel="noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => setActive(p)}
                     className="self-start mt-4 text-[10px] font-bold tracking-widest text-accent hover:underline underline-offset-4"
                   >
                     WATCH_DEMO →
-                  </a>
+                  </button>
                 )}
               </div>
             </div>
           </motion.div>
         ))}
       </div>
+
+      <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
+        <DialogContent className="max-w-3xl w-[95vw] bg-surface border border-accent/40 p-4 sm:p-6 shadow-[0_20px_80px_-20px_rgba(204,255,0,0.45)]">
+          <DialogHeader>
+            <DialogTitle className="font-heading text-accent tracking-tight">
+              {active?.name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="aspect-video w-full bg-background outline outline-1 -outline-offset-1 outline-accent/30 overflow-hidden">
+            {embedUrl ? (
+              <iframe
+                src={embedUrl}
+                title={`${active?.name} demo video`}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            ) : (
+              <div className="w-full h-full grid place-items-center text-xs font-mono text-accent/70 px-4 text-center">
+                INVALID_VIDEO_LINK
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
