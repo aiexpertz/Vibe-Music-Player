@@ -685,11 +685,14 @@ function WorkManager() {
   const [loading, setLoading] = useState(true);
 
   const [submitting, setSubmitting] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [existingImage, setExistingImage] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [techs, setTechs] = useState("");
   const [youtube, setYoutube] = useState("");
   const [file, setFile] = useState<File | null>(null);
+
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
