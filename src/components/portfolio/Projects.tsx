@@ -1,6 +1,29 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+function toYouTubeEmbed(url: string): string | null {
+  try {
+    const u = new URL(url.trim());
+    let id = "";
+    if (u.hostname.includes("youtu.be")) id = u.pathname.slice(1);
+    else if (u.pathname.startsWith("/embed/")) id = u.pathname.split("/")[2];
+    else if (u.pathname.startsWith("/shorts/")) id = u.pathname.split("/")[2];
+    else id = u.searchParams.get("v") ?? "";
+    if (!id) return null;
+    const t = u.searchParams.get("t") ?? u.searchParams.get("start");
+    const start = t ? `&start=${parseInt(t, 10) || 0}` : "";
+    return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0${start}`;
+  } catch {
+    return null;
+  }
+}
 import aetherImg from "@/assets/project-aether.jpg";
 import orchestratorImg from "@/assets/project-orchestrator.jpg";
 
