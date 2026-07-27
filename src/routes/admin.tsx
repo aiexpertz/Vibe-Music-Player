@@ -915,7 +915,17 @@ function WorkManager() {
   );
 }
 
-function SortableProjectRow({ project: p, onDelete }: { project: Project; onDelete: (id: string) => void }) {
+function SortableProjectRow({
+  project: p,
+  onDelete,
+  onEdit,
+  editing,
+}: {
+  project: Project;
+  onDelete: (id: string) => void;
+  onEdit: (p: Project) => void;
+  editing: boolean;
+}) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: p.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -926,8 +936,9 @@ function SortableProjectRow({ project: p, onDelete }: { project: Project; onDele
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-4 border border-white/10 bg-surface/40 p-4 hover:border-accent/30 transition-colors"
+      className={`flex items-center gap-4 border bg-surface/40 p-4 transition-colors ${editing ? "border-accent/60" : "border-white/10 hover:border-accent/30"}`}
     >
+
       <button
         {...attributes}
         {...listeners}
