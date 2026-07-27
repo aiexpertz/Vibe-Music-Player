@@ -74,6 +74,8 @@ const fallback: DisplayProject[] = [
 
 export function Projects() {
   const [items, setItems] = useState<DisplayProject[] | null>(null);
+  const [active, setActive] = useState<DisplayProject | null>(null);
+  const embedUrl = active?.youtube ? toYouTubeEmbed(active.youtube) : null;
 
   useEffect(() => {
     let active = true;
