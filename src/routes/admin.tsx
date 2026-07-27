@@ -734,27 +734,61 @@ function WorkManager() {
         imageUrl = signed.signedUrl;
       }
       const technologies = techs.split(",").map((t) => t.trim()).filter(Boolean);
-      const nextOrder = projects.length;
-      const { error } = await supabase.from("projects").insert({
-        title,
-        description,
-        technologies,
-        youtube_url: youtube || null,
-        image_url: imageUrl,
-        display_order: nextOrder,
-      });
-      if (error) throw error;
-      toast.success("Project published");
-      setTitle(""); setDescription(""); setTechs(""); setYoutube(""); setFile(null);
-      const el = document.getElementById("file-input") as HTMLInputElement | null;
-      if (el) el.value = "";
+      if (editingId) {
+        const { error } = await supabase
+          .from("projects")
+          .update({
+            title,
+            description,
+            technologies,
+            youtube_url: youtube || null,
+            ...(imageUrl ? { image_url: imageUrl } : {}),
+          })
+          .eq("id", editingId);
+        if (error) throw error;
+        toast.success("Project updated");
+      } else {
+        const { error } = await supabase.from("projects").insert({
+          title,
+          description,
+          technologies,
+          youtube_url: youtube || null,
+          image_url: imageUrl,
+          display_order: projects.length,
+        });
+        if (error) throw error;
+        toast.success("Project published");
+      }
+      resetForm();
       load();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Publish failed");
+      toast.error(err instanceof Error ? err.message : "Save failed");
     } finally {
       setSubmitting(false);
     }
   }
+
+  function resetForm() {
+    setEditingId(null);
+    setExistingImage(null);
+    setTitle(""); setDescription(""); setTechs(""); setYoutube(""); setFile(null);
+    const el = document.getElementById("file-input") as HTMLInputElement | null;
+    if (el) el.value = "";
+  }
+
+  function onEdit(p: Project) {
+    setEditingId(p.id);
+    setExistingImage(p.image_url ?? null);
+    setTitle(p.title);
+    setDescription(p.description);
+    setTechs((p.technologies ?? []).join(", "));
+    setYoutube(p.youtube_url ?? "");
+    setFile(null);
+    const el = document.getElementById("file-input") as HTMLInputElement | null;
+    if (el) el.value = "";
+    document.getElementById("project-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
 
   async function onDelete(id: string) {
     if (!confirm("Delete this project?")) return;
