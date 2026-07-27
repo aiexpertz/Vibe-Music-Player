@@ -961,12 +961,20 @@ function SortableProjectRow({
         #{(p.display_order ?? 0).toString().padStart(2, "0")}
       </span>
       <button
+        onClick={() => onEdit(p)}
+        className="text-xs font-bold uppercase tracking-widest text-accent border border-accent/40 px-3 py-2 hover:bg-accent hover:text-black transition-colors"
+        type="button"
+      >
+        Edit
+      </button>
+      <button
         onClick={() => onDelete(p.id)}
         className="text-xs font-bold uppercase tracking-widest text-red-400 hover:text-red-300 border border-red-500/30 px-3 py-2 hover:bg-red-500/10 transition-colors"
         type="button"
       >
         Delete
       </button>
+
     </div>
   );
 }
