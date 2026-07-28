@@ -3,10 +3,12 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Mail, Phone, Github, Linkedin, Instagram } from "lucide-react";
 import { useSection } from "@/lib/site-content";
+import { supabase } from "@/integrations/supabase/client";
 
 export function Contact() {
   const c = useSection("contact");
   const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState<{ ok: boolean; msg: string } | null>(null);
 
   const SOCIALS = [
     { label: "GITHUB", href: c.github_url, Icon: Github },
@@ -14,18 +16,32 @@ export function Contact() {
     { label: "INSTAGRAM", href: c.instagram_url, Icon: Instagram },
   ];
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitting(true);
     const form = e.currentTarget;
-    setTimeout(() => {
-      toast.success("Transmission received", {
-        description: "I'll get back to you within 24 hours.",
-      });
-      form.reset();
-      setSubmitting(false);
-    }, 600);
+    const fd = new FormData(form);
+    const payload = {
+      name: String(fd.get("name") ?? "").trim(),
+      email: String(fd.get("email") ?? "").trim(),
+      message: String(fd.get("message") ?? "").trim(),
+    };
+    setSubmitting(true);
+    setStatus(null);
+    const { error } = await supabase.from("contact_messages").insert(payload);
+    setSubmitting(false);
+    if (error) {
+      setStatus({ ok: false, msg: `Transmission failed — ${error.message}` });
+      toast.error("Message not sent", { description: error.message });
+      return;
+    }
+    setStatus({
+      ok: true,
+      msg: "Transmission received — saved. I'll get back to you within 24 hours.",
+    });
+    toast.success("Transmission received");
+    form.reset();
   }
+
 
 
   return (
@@ -128,6 +144,18 @@ export function Contact() {
         >
           {submitting ? "Transmitting..." : "Initialize Project"}
         </button>
+        {status && (
+          <p
+            role="status"
+            className={`text-xs font-bold tracking-widest uppercase px-4 py-3 border ${
+              status.ok
+                ? "text-accent border-accent/40 bg-accent/5"
+                : "text-red-400 border-red-500/40 bg-red-500/5"
+            }`}
+          >
+            {status.msg}
+          </p>
+        )}
       </motion.form>
 
       <div className="mt-16 pt-12 border-t border-white/5 flex justify-center gap-8 flex-wrap">

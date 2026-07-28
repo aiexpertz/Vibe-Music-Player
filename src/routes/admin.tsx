@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { Component, useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,7 +56,7 @@ type Project = {
 
 const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 10;
 
-const TABS: { key: "branding" | SectionKey | "work"; label: string }[] = [
+const TABS: { key: SectionKey | "work" | "messages"; label: string }[] = [
   { key: "branding", label: "Branding" },
   { key: "home", label: "Home" },
   { key: "work", label: "Work" },
@@ -64,6 +64,7 @@ const TABS: { key: "branding" | SectionKey | "work"; label: string }[] = [
   { key: "philosophy", label: "Philosophy" },
   { key: "signal", label: "Client Signal" },
   { key: "contact", label: "Contact" },
+  { key: "messages", label: "Messages" },
 ];
 
 function AdminPage() {
@@ -241,6 +242,38 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
+class TabErrorBoundary extends Component<
+  { children: ReactNode; resetKey: string },
+  { error: Error | null }
+> {
+  state: { error: Error | null } = { error: null };
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+  componentDidUpdate(prev: { resetKey: string }) {
+    if (prev.resetKey !== this.props.resetKey && this.state.error) this.setState({ error: null });
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="border border-red-500/40 bg-red-500/5 p-6 space-y-3">
+          <h2 className="font-heading font-bold text-lg">This tab hit an error</h2>
+          <p className="text-xs font-mono text-muted-foreground break-all">
+            {this.state.error.message}
+          </p>
+          <button
+            onClick={() => this.setState({ error: null })}
+            className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-accent/40 text-accent hover:bg-accent hover:text-black"
+          >
+            Try again
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function Dashboard() {
   const [tab, setTab] = useState<(typeof TABS)[number]["key"]>("branding");
   return (
@@ -261,11 +294,85 @@ function Dashboard() {
         ))}
       </div>
 
-      {tab === "work" ? (
-        <WorkManager />
-      ) : (
-        <SectionEditor sectionKey={tab as SectionKey} />
+      <TabErrorBoundary resetKey={tab}>
+        {tab === "work" ? (
+          <WorkManager />
+        ) : tab === "messages" ? (
+          <MessagesManager />
+        ) : (
+          <SectionEditor sectionKey={tab as SectionKey} />
+        )}
+      </TabErrorBoundary>
+    </div>
+  );
+}
+
+type ContactMessage = {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+};
+
+function MessagesManager() {
+  const [rows, setRows] = useState<ContactMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  async function load() {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("contact_messages")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) toast.error(error.message);
+    setRows((data as ContactMessage[]) ?? []);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  async function remove(id: string) {
+    const { error } = await supabase.from("contact_messages").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    setRows((r) => r.filter((x) => x.id !== id));
+    toast.success("Message deleted");
+  }
+
+  if (loading) return <p className="text-muted-foreground text-sm font-mono">[ loading… ]</p>;
+
+  return (
+    <div className="border border-white/10 bg-surface/60 backdrop-blur p-8 space-y-4">
+      <h2 className="text-2xl font-heading font-extrabold">Contact messages</h2>
+      {rows.length === 0 && (
+        <p className="text-xs font-mono text-muted-foreground">[ no messages yet ]</p>
       )}
+      {rows.map((m) => (
+        <div key={m.id} className="border border-white/10 p-4 grid gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="font-bold">
+              {m.name}{" "}
+              <a href={`mailto:${m.email}`} className="text-accent text-sm font-normal hover:underline">
+                {m.email}
+              </a>
+            </p>
+            <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+              {new Date(m.created_at).toLocaleString()}
+            </span>
+          </div>
+          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{m.message}</p>
+          <button
+            type="button"
+            onClick={() => remove(m.id)}
+            className="self-start text-xs font-bold uppercase tracking-widest text-red-400 hover:text-red-300 border border-red-500/30 px-3 py-1.5 hover:bg-red-500/10"
+          >
+            Delete
+          </button>
+        </div>
+      ))}
     </div>
   );
 }
@@ -621,29 +728,38 @@ function SignalFields({
   draft: SiteContentMap["signal"];
   patch: (p: Partial<SiteContentMap["signal"]>) => void;
 }) {
+  const items: TestimonialItem[] = Array.isArray(draft?.items) ? draft.items : [];
   function update(i: number, p: Partial<TestimonialItem>) {
-    patch({ items: draft.items.map((it, idx) => (idx === i ? { ...it, ...p } : it)) });
+    patch({ items: items.map((it, idx) => (idx === i ? { ...it, ...p } : it)) });
   }
   return (
     <div className="grid gap-4">
       <Field label="SECTION HEADING">
-        <input className={inputCls} value={draft.heading} onChange={(e) => patch({ heading: e.target.value })} />
+        <input className={inputCls} value={draft?.heading ?? ""} onChange={(e) => patch({ heading: e.target.value })} />
       </Field>
-      {draft.items.map((t, i) => (
+      {items.length === 0 && (
+        <p className="text-xs font-mono text-muted-foreground">
+          [ no testimonials yet — add one below ]
+        </p>
+      )}
+      {items.map((t, i) => (
         <div key={i} className="border border-white/10 p-4 grid gap-2">
-          <textarea className={`${inputCls} resize-y`} rows={3} value={t.quote} onChange={(e) => update(i, { quote: e.target.value })} placeholder="Quote" />
+          <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-accent">
+            Entry {String(i + 1).padStart(2, "0")}
+          </p>
+          <textarea className={`${inputCls} resize-y`} rows={3} value={t?.quote ?? ""} onChange={(e) => update(i, { quote: e.target.value })} placeholder="Quote / testimonial" />
           <div className="grid md:grid-cols-2 gap-2">
-            <input className={inputCls} value={t.name} onChange={(e) => update(i, { name: e.target.value })} placeholder="Name" />
-            <input className={inputCls} value={t.role} onChange={(e) => update(i, { role: e.target.value })} placeholder="Role / Company" />
+            <input className={inputCls} value={t?.name ?? ""} onChange={(e) => update(i, { name: e.target.value })} placeholder="Name" />
+            <input className={inputCls} value={t?.role ?? ""} onChange={(e) => update(i, { role: e.target.value })} placeholder="Role / Company" />
           </div>
-          <button type="button" onClick={() => patch({ items: draft.items.filter((_, idx) => idx !== i) })} className="self-start text-xs font-bold uppercase tracking-widest text-red-400 hover:text-red-300">
-            Remove
+          <button type="button" onClick={() => patch({ items: items.filter((_, idx) => idx !== i) })} className="self-start text-xs font-bold uppercase tracking-widest text-red-400 hover:text-red-300 border border-red-500/30 px-3 py-1.5 hover:bg-red-500/10">
+            Delete entry
           </button>
         </div>
       ))}
       <button
         type="button"
-        onClick={() => patch({ items: [...draft.items, { quote: "", name: "", role: "" }] })}
+        onClick={() => patch({ items: [...items, { quote: "", name: "", role: "" }] })}
         className="self-start px-4 py-2 text-xs font-bold uppercase tracking-widest border border-accent/40 text-accent hover:bg-accent hover:text-black"
       >
         + Add testimonial
