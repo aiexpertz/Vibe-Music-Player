@@ -3,6 +3,7 @@ import { useSection } from "@/lib/site-content";
 
 export function Testimonials() {
   const { heading, items } = useSection("signal");
+  const list = Array.isArray(items) ? items : [];
   return (
     <section id="signal" className="py-24 px-6 max-w-7xl mx-auto scroll-mt-20">
       <div className="flex items-end mb-12 gap-4 sm:gap-8">
@@ -12,7 +13,7 @@ export function Testimonials() {
         <div className="h-px flex-1 bg-white/10 mb-2" />
       </div>
       <div className="grid md:grid-cols-3 gap-6">
-        {items.map((t, i) => (
+        {list.map((t, i) => (
           <motion.div
             key={`${t.name}-${i}`}
             initial={{ opacity: 0, y: 40 }}
