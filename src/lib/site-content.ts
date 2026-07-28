@@ -157,16 +157,29 @@ export type SiteContentMap = {
   contact: ContactContent;
 };
 
+/** Drop null/undefined values so they never overwrite a default (e.g. items: null). */
+function clean(payload: Record<string, unknown>) {
+  return Object.fromEntries(
+    Object.entries(payload).filter(([k, v]) => v !== undefined && !(v === null && k !== "logo_url" && k !== "favicon_url" && k !== "image_url")),
+  );
+}
+
 export async function fetchAllSiteContent(): Promise<SiteContentMap> {
-  const { data } = await supabase.from("site_content").select("key,data");
+  const { data, error } = await supabase.from("site_content").select("key,data");
+  if (error) console.error("[site_content]", error.message);
   const map = { ...DEFAULTS } as SiteContentMap;
   (data ?? []).forEach((row) => {
     if (!(SECTION_KEYS as readonly string[]).includes(row.key)) return;
     const k = row.key as SectionKey;
-    const payload = (row.data && typeof row.data === "object" ? row.data : {}) as Record<string, unknown>;
+    const payload = (row.data && typeof row.data === "object" && !Array.isArray(row.data)
+      ? row.data
+      : {}) as Record<string, unknown>;
     // @ts-expect-error generic merge of partial DB data over defaults
-    map[k] = { ...DEFAULTS[k], ...payload };
+    map[k] = { ...DEFAULTS[k], ...clean(payload) };
   });
+  // Guarantee list-shaped sections always expose an array.
+  if (!Array.isArray(map.signal.items)) map.signal = { ...map.signal, items: [] };
+  if (!Array.isArray(map.services.items)) map.services = { ...map.services, items: [] };
   return map;
 }
 
