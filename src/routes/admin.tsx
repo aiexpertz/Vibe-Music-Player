@@ -621,29 +621,38 @@ function SignalFields({
   draft: SiteContentMap["signal"];
   patch: (p: Partial<SiteContentMap["signal"]>) => void;
 }) {
+  const items: TestimonialItem[] = Array.isArray(draft?.items) ? draft.items : [];
   function update(i: number, p: Partial<TestimonialItem>) {
-    patch({ items: draft.items.map((it, idx) => (idx === i ? { ...it, ...p } : it)) });
+    patch({ items: items.map((it, idx) => (idx === i ? { ...it, ...p } : it)) });
   }
   return (
     <div className="grid gap-4">
       <Field label="SECTION HEADING">
-        <input className={inputCls} value={draft.heading} onChange={(e) => patch({ heading: e.target.value })} />
+        <input className={inputCls} value={draft?.heading ?? ""} onChange={(e) => patch({ heading: e.target.value })} />
       </Field>
-      {draft.items.map((t, i) => (
+      {items.length === 0 && (
+        <p className="text-xs font-mono text-muted-foreground">
+          [ no testimonials yet — add one below ]
+        </p>
+      )}
+      {items.map((t, i) => (
         <div key={i} className="border border-white/10 p-4 grid gap-2">
-          <textarea className={`${inputCls} resize-y`} rows={3} value={t.quote} onChange={(e) => update(i, { quote: e.target.value })} placeholder="Quote" />
+          <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-accent">
+            Entry {String(i + 1).padStart(2, "0")}
+          </p>
+          <textarea className={`${inputCls} resize-y`} rows={3} value={t?.quote ?? ""} onChange={(e) => update(i, { quote: e.target.value })} placeholder="Quote / testimonial" />
           <div className="grid md:grid-cols-2 gap-2">
-            <input className={inputCls} value={t.name} onChange={(e) => update(i, { name: e.target.value })} placeholder="Name" />
-            <input className={inputCls} value={t.role} onChange={(e) => update(i, { role: e.target.value })} placeholder="Role / Company" />
+            <input className={inputCls} value={t?.name ?? ""} onChange={(e) => update(i, { name: e.target.value })} placeholder="Name" />
+            <input className={inputCls} value={t?.role ?? ""} onChange={(e) => update(i, { role: e.target.value })} placeholder="Role / Company" />
           </div>
-          <button type="button" onClick={() => patch({ items: draft.items.filter((_, idx) => idx !== i) })} className="self-start text-xs font-bold uppercase tracking-widest text-red-400 hover:text-red-300">
-            Remove
+          <button type="button" onClick={() => patch({ items: items.filter((_, idx) => idx !== i) })} className="self-start text-xs font-bold uppercase tracking-widest text-red-400 hover:text-red-300 border border-red-500/30 px-3 py-1.5 hover:bg-red-500/10">
+            Delete entry
           </button>
         </div>
       ))}
       <button
         type="button"
-        onClick={() => patch({ items: [...draft.items, { quote: "", name: "", role: "" }] })}
+        onClick={() => patch({ items: [...items, { quote: "", name: "", role: "" }] })}
         className="self-start px-4 py-2 text-xs font-bold uppercase tracking-widest border border-accent/40 text-accent hover:bg-accent hover:text-black"
       >
         + Add testimonial
