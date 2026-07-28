@@ -144,6 +144,18 @@ export function Contact() {
         >
           {submitting ? "Transmitting..." : "Initialize Project"}
         </button>
+        {status && (
+          <p
+            role="status"
+            className={`text-xs font-bold tracking-widest uppercase px-4 py-3 border ${
+              status.ok
+                ? "text-accent border-accent/40 bg-accent/5"
+                : "text-red-400 border-red-500/40 bg-red-500/5"
+            }`}
+          >
+            {status.msg}
+          </p>
+        )}
       </motion.form>
 
       <div className="mt-16 pt-12 border-t border-white/5 flex justify-center gap-8 flex-wrap">
