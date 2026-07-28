@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { Component, useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,7 +56,7 @@ type Project = {
 
 const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 10;
 
-const TABS: { key: "branding" | SectionKey | "work"; label: string }[] = [
+const TABS: { key: SectionKey | "work" | "messages"; label: string }[] = [
   { key: "branding", label: "Branding" },
   { key: "home", label: "Home" },
   { key: "work", label: "Work" },
@@ -64,6 +64,7 @@ const TABS: { key: "branding" | SectionKey | "work"; label: string }[] = [
   { key: "philosophy", label: "Philosophy" },
   { key: "signal", label: "Client Signal" },
   { key: "contact", label: "Contact" },
+  { key: "messages", label: "Messages" },
 ];
 
 function AdminPage() {
