@@ -10,11 +10,22 @@ const contactSchema = z.object({
 export const notifyContactMessage = createServerFn({ method: "POST" })
   .inputValidator(contactSchema)
   .handler(async ({ data }) => {
+    console.log(`[notifyContactMessage] received submission from ${data.email}`);
     const { sendContactNotification } = await import("./contact-mailer.server");
     try {
-      return await sendContactNotification(data);
+      const result = await sendContactNotification(data);
+      console.log("[notifyContactMessage] result:", JSON.stringify(result));
+      return result;
     } catch (error) {
-      console.error("[notifyContactMessage] send failed", error);
-      return { sent: false, reason: "send_failed" as const };
+      console.error(
+        "[notifyContactMessage] send failed:",
+        error instanceof Error ? `${error.name}: ${error.message}\n${error.stack}` : String(error),
+      );
+      return {
+        sent: false,
+        reason: "send_failed" as const,
+        error: error instanceof Error ? error.message : String(error),
+      };
     }
   });
+
