@@ -125,6 +125,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_valid_contact_message: {
+        Args: { _email: string; _message: string; _name: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin"
