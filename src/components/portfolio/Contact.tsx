@@ -38,10 +38,17 @@ export function Contact() {
     }
 
     try {
-      await notifyContactMessage({ data: payload });
+      const result = (await notifyContactMessage({ data: payload })) as {
+        sent?: boolean;
+        reason?: string;
+      };
+      if (!result?.sent) {
+        console.error("Contact notification not sent:", result);
+      }
     } catch (err) {
       console.error("Contact notification failed", err);
     }
+
 
     setSubmitting(false);
     setStatus({
