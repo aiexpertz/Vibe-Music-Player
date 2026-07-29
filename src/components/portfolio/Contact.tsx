@@ -28,12 +28,20 @@ export function Contact() {
     setSubmitting(true);
     setStatus(null);
     const { error } = await supabase.from("contact_messages").insert(payload);
-    setSubmitting(false);
     if (error) {
+      setSubmitting(false);
       setStatus({ ok: false, msg: `Transmission failed — ${error.message}` });
       toast.error("Message not sent", { description: error.message });
       return;
     }
+
+    try {
+      await notifyContactMessage({ data: payload });
+    } catch (err) {
+      console.error("Contact notification failed", err);
+    }
+
+    setSubmitting(false);
     setStatus({
       ok: true,
       msg: "Transmission received — saved. I'll get back to you within 24 hours.",
@@ -41,6 +49,7 @@ export function Contact() {
     toast.success("Transmission received");
     form.reset();
   }
+
 
 
 
