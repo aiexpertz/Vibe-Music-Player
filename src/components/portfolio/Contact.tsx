@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { Mail, Phone, Github, Linkedin, Instagram } from "lucide-react";
 import { useSection } from "@/lib/site-content";
 import { supabase } from "@/integrations/supabase/client";
+import { notifyContactMessage } from "@/lib/contact.functions";
+
 
 export function Contact() {
   const c = useSection("contact");
