@@ -12,6 +12,11 @@ export function Testimonials() {
         </h2>
         <div className="h-px flex-1 bg-white/10 mb-2" />
       </div>
+      {list.length === 0 && (
+        <p className="text-sm font-mono text-muted-foreground">
+          No client feedback published yet.
+        </p>
+      )}
       <div className="grid md:grid-cols-3 gap-6">
         {list.map((t, i) => (
           <motion.div

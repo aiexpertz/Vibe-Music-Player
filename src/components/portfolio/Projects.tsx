@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Dialog,
@@ -24,8 +25,6 @@ function toYouTubeEmbed(url: string): string | null {
     return null;
   }
 }
-import aetherImg from "@/assets/project-aether.jpg";
-import orchestratorImg from "@/assets/project-orchestrator.jpg";
 
 type DbProject = {
   id: string;
@@ -43,72 +42,58 @@ type DisplayProject = {
   tag: string;
   description: string;
   technologies: string[];
-  image: string;
+  image: string | null;
   youtube: string | null;
 };
 
-const fallbackImages = [aetherImg, orchestratorImg];
-
-const fallback: DisplayProject[] = [
-  {
-    id: "f1",
-    name: "Project_Aether",
-    tag: "Autonomous Sales Agent",
-    description:
-      "Multi-agent swarm for automated lead qualification and CRM synchronization using GPT-4o.",
-    technologies: ["GPT-4o", "LangGraph", "Supabase"],
-    image: aetherImg,
-    youtube: null,
-  },
-  {
-    id: "f2",
-    name: "Vibe_Orchestrator",
-    tag: "Custom LLM Middleware",
-    description:
-      "High-throughput API gateway for managing agentic workflows and token cost optimization.",
-    technologies: ["TypeScript", "Edge Functions", "Redis"],
-    image: orchestratorImg,
-    youtube: null,
-  },
-];
+async function fetchProjects(): Promise<DisplayProject[]> {
+  const { data, error } = await supabase
+    .from("projects")
+    .select("*")
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: false });
+  if (error) {
+    console.error("[projects]", error.message);
+    throw error;
+  }
+  return ((data as DbProject[] | null) ?? []).map((r) => ({
+    id: r.id,
+    name: r.title,
+    tag: r.technologies?.[0] ?? "Project",
+    description: r.description,
+    technologies: r.technologies ?? [],
+    image: r.image_url,
+    youtube: r.youtube_url,
+  }));
+}
 
 export function Projects() {
-  const [items, setItems] = useState<DisplayProject[] | null>(null);
+  const queryClient = useQueryClient();
   const [active, setActive] = useState<DisplayProject | null>(null);
   const embedUrl = active?.youtube ? toYouTubeEmbed(active.youtube) : null;
 
-  useEffect(() => {
-    let active = true;
-    supabase
-      .from("projects")
-      .select("*")
-      .order("display_order", { ascending: true })
-      .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        if (!active) return;
-        const rows = (data as DbProject[] | null) ?? [];
-        if (rows.length === 0) {
-          setItems(fallback);
-          return;
-        }
-        setItems(
-          rows.map((r, i) => ({
-            id: r.id,
-            name: r.title,
-            tag: r.technologies[0] ?? "Project",
-            description: r.description,
-            technologies: r.technologies,
-            image: r.image_url || fallbackImages[i % fallbackImages.length],
-            youtube: r.youtube_url,
-          })),
-        );
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
+  const { data: list = [], isLoading } = useQuery({
+    queryKey: ["projects"],
+    queryFn: fetchProjects,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
+  });
 
-  const list = items ?? fallback;
+  // Live updates whenever the admin panel adds/edits/deletes a project.
+  useEffect(() => {
+    const channel = supabase
+      .channel("projects_changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "projects" },
+        () => queryClient.invalidateQueries({ queryKey: ["projects"] }),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   return (
     <section id="work" className="py-24 px-6 max-w-7xl mx-auto scroll-mt-20">
@@ -118,6 +103,12 @@ export function Projects() {
         </h2>
         <div className="h-px flex-1 bg-white/10 mb-2" />
       </div>
+
+      {!isLoading && list.length === 0 && (
+        <p className="text-sm font-mono text-muted-foreground">
+          No deployments published yet.
+        </p>
+      )}
 
       <div className="grid md:grid-cols-2 gap-8" style={{ perspective: 1400 }}>
         {list.map((p, i) => (
@@ -132,12 +123,18 @@ export function Projects() {
             <div className="relative w-full aspect-video transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
               {/* FRONT */}
               <div className="absolute inset-0 [backface-visibility:hidden] bg-surface outline outline-1 -outline-offset-1 outline-white/10 overflow-hidden shadow-[0_20px_60px_-20px_rgba(204,255,0,0.2)]">
-                <img
-                  src={p.image}
-                  alt={`${p.name} mockup`}
-                  loading="lazy"
-                  className="w-full h-full object-cover opacity-80"
-                />
+                {p.image ? (
+                  <img
+                    src={p.image}
+                    alt={`${p.name} mockup`}
+                    loading="lazy"
+                    className="w-full h-full object-cover opacity-80"
+                  />
+                ) : (
+                  <div className="w-full h-full grid place-items-center bg-background text-accent/50 font-mono text-xs uppercase tracking-widest">
+                    {p.name}
+                  </div>
+                )}
                 <span className="absolute top-3 left-3 text-[10px] font-medium uppercase tracking-[0.15em] text-accent bg-background/70 px-2 py-1">
                   {p.tag}
                 </span>

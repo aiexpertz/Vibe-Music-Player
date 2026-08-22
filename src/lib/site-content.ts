@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export const SECTION_KEYS = [
@@ -72,73 +73,73 @@ export const DEFAULTS = {
     favicon_url: null,
   } as BrandingContent,
   home: {
-    badge: "AI Agent Architect",
-    headline_prefix: "Building Intelligent",
-    headline_highlight: "AI Agents",
-    headline_suffix: "That Scale Your Business.",
+    badge: "AI Automation for Real Estate",
+    headline_prefix: "AI Agents That Qualify Leads",
+    headline_highlight: "& Close Deals",
+    headline_suffix: "For Real Estate Teams.",
     subheadline:
-      "I combine heavy-duty LLM orchestration with Vibe Coding—prioritizing speed, intuition, and high-performance DX.",
+      "I build AI lead qualification bots, WhatsApp property-inquiry automation, and CRM follow-up systems that turn cold real estate leads into booked viewings — around the clock.",
     cta_primary: "Book a Consultation",
-    cta_secondary: "View Manifest",
+    cta_secondary: "See How It Works",
   } as HomeContent,
   services: {
     heading: "CORE_SERVICES",
     items: [
       {
         code: "S_01",
-        title: "AI Automation",
+        title: "AI Lead Qualification Bots",
         description:
-          "End-to-end workflow automation using tool-calling agents and multi-step reasoning chains that replace manual ops drag.",
+          "Agents that instantly engage every new property lead, ask budget, area, timeline and financing questions, score the lead, and hand hot buyers straight to your agents.",
       },
       {
         code: "S_02",
-        title: "Custom Web Apps",
+        title: "WhatsApp Property Inquiry Automation",
         description:
-          "Performant, real-time interfaces built on a modern stack — React, TanStack, Tailwind — optimized for AI-driven UX.",
+          "24/7 WhatsApp and website chatbots that answer listing questions, share brochures and pricing, and book viewings directly into your calendar.",
       },
       {
         code: "S_03",
-        title: "Intelligent Chatbots",
+        title: "Buyer-to-Listing Matching Agents",
         description:
-          "RAG-powered conversational agents that hold context, follow brand voice, and execute actual business logic.",
+          "AI that reads buyer requirements and matches them to your live inventory, then sends personalised listing shortlists the moment a suitable property hits the market.",
+      },
+      {
+        code: "S_04",
+        title: "Automated Lead Follow-Up",
+        description:
+          "Multi-touch nurture sequences over WhatsApp, email and SMS that keep every real estate lead warm until they're ready to buy, rent or sell.",
+      },
+      {
+        code: "S_05",
+        title: "CRM Automation for Realtors",
+        description:
+          "Hands-free data entry, deal-stage updates and reminders across your CRM — no more leads lost in spreadsheets or unread inboxes.",
+      },
+      {
+        code: "S_06",
+        title: "Custom Real Estate Web Apps",
+        description:
+          "Fast, AI-powered property portals, agent dashboards and valuation tools built on a modern stack and wired into your existing listing data.",
       },
     ],
   } as ServicesContent,
   philosophy: {
-    heading: "The Vibe Coding Philosophy",
-    body: "Traditional dev is too slow. Vibe Coding is the art of using AI to bridge the gap between imagination and production at terminal velocity. I build systems that don't just follow logic—they anticipate user intent. Cleaner stacks, faster shipping, zero friction.",
-    stat1_value: "10×",
-    stat1_label: "Deployment Speed",
-    stat2_value: "99%",
-    stat2_label: "Uptime SLA",
+    heading: "How I Work With Real Estate Teams",
+    body: "Real estate runs on speed — the agent who replies first usually wins the deal. I build AI systems that respond to every property inquiry in seconds, qualify the buyer or seller, and only surface serious leads to your team. Start with one workflow, prove the ROI in weeks, then scale it across your whole pipeline.",
+    stat1_value: "24/7",
+    stat1_label: "Lead Response",
+    stat2_value: "<60s",
+    stat2_label: "First Reply Time",
     image_url: null,
   } as PhilosophyContent,
   signal: {
     heading: "CLIENT_SIGNAL",
-    items: [
-      {
-        quote:
-          "The agentic workflows reduced our SDR response time from hours to seconds. Game-changing output.",
-        name: "Sarah Chen",
-        role: "CTO @ NexusFlow",
-      },
-      {
-        quote:
-          "Efficiency reached a point where our internal tools started feeling like they were one step ahead of us.",
-        name: "Marcus Thorne",
-        role: "Founder @ Automata",
-      },
-      {
-        quote:
-          "A rare developer who understands both the deep technical constraints and the high-level business vibe.",
-        name: "Elena Rossi",
-        role: "VP Eng @ Vertex",
-      },
-    ],
+    items: [] as TestimonialItem[],
   } as SignalContent,
   contact: {
-    heading: "Ready to Automate?",
-    subheading: "Let's build something that thinks for itself.",
+    heading: "Ready to Automate Your Real Estate Pipeline?",
+    subheading:
+      "Let's put an AI agent on every lead, inquiry and follow-up in your business.",
     email: "ammarsidaiexpert@gmail.com",
     phone: "+92 314 7666278",
     github_url: "https://github.com/aiexpertz",
@@ -184,10 +185,29 @@ export async function fetchAllSiteContent(): Promise<SiteContentMap> {
 }
 
 export function useSiteContent() {
+  const queryClient = useQueryClient();
+
+  // Live updates: refetch whenever the admin panel writes to site_content.
+  useEffect(() => {
+    const channel = supabase
+      .channel("site_content_changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "site_content" },
+        () => queryClient.invalidateQueries({ queryKey: ["site_content"] }),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
   return useQuery({
     queryKey: ["site_content"],
     queryFn: fetchAllSiteContent,
-    staleTime: 30_000,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   });
 }
 
