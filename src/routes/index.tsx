@@ -10,17 +10,20 @@ import { Contact, Footer } from "@/components/portfolio/Contact";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Vibe Lab — AI Agent Developer & Vibe Coder" },
+      { title: "AI Automation for Real Estate | Lead Bots & CRM Agents" },
       {
         name: "description",
         content:
-          "Independent AI agent developer building autonomous LLM workflows, intelligent chatbots, and custom web apps. Hire a Vibe Coder for high-velocity delivery.",
+          "AI automation specialist for real estate: lead qualification bots, WhatsApp property inquiry chatbots, buyer-to-listing matching and automated CRM follow-up for agents.",
       },
-      { property: "og:title", content: "Vibe Lab — AI Agent Developer & Vibe Coder" },
+      {
+        property: "og:title",
+        content: "AI Automation for Real Estate | Lead Bots & CRM Agents",
+      },
       {
         property: "og:description",
         content:
-          "Autonomous AI agents, RAG chatbots, and custom web apps — built fast with the Vibe Coding philosophy.",
+          "AI agents that qualify real estate leads, answer property inquiries on WhatsApp 24/7, match buyers to listings and automate realtor CRM follow-up.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
