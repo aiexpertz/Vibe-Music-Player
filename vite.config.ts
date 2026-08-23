@@ -15,4 +15,10 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    // worker-mailer is loaded dynamically inside a server-only handler and imports
+    // the Worker-only "cloudflare:sockets" module. Keep it out of dependency
+    // pre-bundling so the browser bundle never tries to resolve it.
+    optimizeDeps: { exclude: ["worker-mailer"] },
+  },
 });
