@@ -188,9 +188,11 @@ export function useSiteContent() {
   const queryClient = useQueryClient();
 
   // Live updates: refetch whenever the admin panel writes to site_content.
+  // Unique channel name per hook instance — several components use this hook,
+  // and Supabase rejects re-using one channel name across subscribers.
   useEffect(() => {
     const channel = supabase
-      .channel("site_content_changes")
+      .channel(`site_content_changes_${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "site_content" },
