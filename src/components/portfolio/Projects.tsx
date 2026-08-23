@@ -83,7 +83,7 @@ export function Projects() {
   // Live updates whenever the admin panel adds/edits/deletes a project.
   useEffect(() => {
     const channel = supabase
-      .channel("projects_changes")
+      .channel(`projects_changes_${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "projects" },
