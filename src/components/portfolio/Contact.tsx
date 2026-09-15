@@ -75,7 +75,7 @@ export function Contact() {
         </a>
       </motion.div>
 
-      <div className="mt-16 pt-12 border-t border-white/5 flex justify-center gap-8 flex-wrap">
+      <div className="mt-10 pt-10 border-t border-white/5 flex justify-center gap-8 flex-wrap">
         {SOCIALS.map(({ label, href, Icon }) => (
           <a
             key={label}
