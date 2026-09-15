@@ -1,66 +1,16 @@
-import { useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
-import { toast } from "sonner";
 import { Mail, Phone, Github, Linkedin, Instagram } from "lucide-react";
 import { useSection } from "@/lib/site-content";
-import { supabase } from "@/integrations/supabase/client";
-import { notifyContactMessage } from "@/lib/contact.functions";
 
 
 export function Contact() {
   const c = useSection("contact");
-  const [submitting, setSubmitting] = useState(false);
-  const [status, setStatus] = useState<{ ok: boolean; msg: string } | null>(null);
 
   const SOCIALS = [
     { label: "GITHUB", href: c.github_url, Icon: Github },
     { label: "LINKEDIN", href: c.linkedin_url, Icon: Linkedin },
     { label: "INSTAGRAM", href: c.instagram_url, Icon: Instagram },
   ];
-
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const fd = new FormData(form);
-    const payload = {
-      name: String(fd.get("name") ?? "").trim(),
-      email: String(fd.get("email") ?? "").trim(),
-      message: String(fd.get("message") ?? "").trim(),
-    };
-    setSubmitting(true);
-    setStatus(null);
-    const { error } = await supabase.from("contact_messages").insert(payload);
-    if (error) {
-      setSubmitting(false);
-      setStatus({ ok: false, msg: `Transmission failed — ${error.message}` });
-      toast.error("Message not sent", { description: error.message });
-      return;
-    }
-
-    try {
-      const result = (await notifyContactMessage({ data: payload })) as {
-        sent?: boolean;
-        reason?: string;
-      };
-      if (!result?.sent) {
-        console.error("Contact notification not sent:", result);
-      }
-    } catch (err) {
-      console.error("Contact notification failed", err);
-    }
-
-
-    setSubmitting(false);
-    setStatus({
-      ok: true,
-      msg: "Transmission received — saved. I'll get back to you within 24 hours.",
-    });
-    toast.success("Transmission received");
-    form.reset();
-  }
-
-
-
 
   return (
     <section
