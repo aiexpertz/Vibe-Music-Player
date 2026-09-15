@@ -1,16 +1,10 @@
-import { useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
-import { toast } from "sonner";
 import { Mail, Phone, Github, Linkedin, Instagram } from "lucide-react";
 import { useSection } from "@/lib/site-content";
-import { supabase } from "@/integrations/supabase/client";
-import { notifyContactMessage } from "@/lib/contact.functions";
 
 
 export function Contact() {
   const c = useSection("contact");
-  const [submitting, setSubmitting] = useState(false);
-  const [status, setStatus] = useState<{ ok: boolean; msg: string } | null>(null);
 
   const SOCIALS = [
     { label: "GITHUB", href: c.github_url, Icon: Github },
@@ -18,54 +12,10 @@ export function Contact() {
     { label: "INSTAGRAM", href: c.instagram_url, Icon: Instagram },
   ];
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const fd = new FormData(form);
-    const payload = {
-      name: String(fd.get("name") ?? "").trim(),
-      email: String(fd.get("email") ?? "").trim(),
-      message: String(fd.get("message") ?? "").trim(),
-    };
-    setSubmitting(true);
-    setStatus(null);
-    const { error } = await supabase.from("contact_messages").insert(payload);
-    if (error) {
-      setSubmitting(false);
-      setStatus({ ok: false, msg: `Transmission failed — ${error.message}` });
-      toast.error("Message not sent", { description: error.message });
-      return;
-    }
-
-    try {
-      const result = (await notifyContactMessage({ data: payload })) as {
-        sent?: boolean;
-        reason?: string;
-      };
-      if (!result?.sent) {
-        console.error("Contact notification not sent:", result);
-      }
-    } catch (err) {
-      console.error("Contact notification failed", err);
-    }
-
-
-    setSubmitting(false);
-    setStatus({
-      ok: true,
-      msg: "Transmission received — saved. I'll get back to you within 24 hours.",
-    });
-    toast.success("Transmission received");
-    form.reset();
-  }
-
-
-
-
   return (
     <section
       id="contact"
-      className="py-24 px-6 max-w-5xl mx-auto scroll-mt-20"
+      className="py-16 px-6 max-w-5xl mx-auto scroll-mt-20"
     >
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -85,11 +35,13 @@ export function Contact() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, margin: "-60px" }}
         transition={{ duration: 0.5 }}
-        className="grid md:grid-cols-2 gap-4 mb-10"
+        className="grid md:grid-cols-2 gap-4 mb-8"
       >
         <a
-          href={`mailto:${c.email}`}
-          className="flex items-center gap-4 p-5 bg-surface border border-white/10 hover:border-accent/50 hover:bg-white/[0.02] transition-all group"
+          href="https://mail.google.com/mail/?view=cm&fs=1&to=ammarsidaiexpert@gmail.com"
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-4 p-5 bg-surface border border-white/10 hover:border-accent/50 hover:bg-white/[0.02] hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(204,255,0,0.12)] transition-all group"
         >
           <div className="size-10 grid place-items-center bg-accent/10 border border-accent/20 shrink-0">
             <Mail className="size-4 text-accent" />
@@ -104,10 +56,10 @@ export function Contact() {
           </div>
         </a>
         <a
-          href={`https://wa.me/${c.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent("Hi, I'm interested in your services")}`}
+          href="https://wa.me/923147666278"
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-4 p-5 bg-surface border border-white/10 hover:border-accent/50 hover:bg-white/[0.02] transition-all group"
+          className="flex items-center gap-4 p-5 bg-surface border border-white/10 hover:border-accent/50 hover:bg-white/[0.02] hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(204,255,0,0.12)] transition-all group"
         >
           <div className="size-10 grid place-items-center bg-accent/10 border border-accent/20 shrink-0">
             <Phone className="size-4 text-accent" />
@@ -123,60 +75,7 @@ export function Contact() {
         </a>
       </motion.div>
 
-
-      <motion.form
-        onSubmit={handleSubmit}
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, margin: "-60px" }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-        className="space-y-6 text-left"
-      >
-        <div className="grid md:grid-cols-2 gap-6">
-          <input
-            type="text"
-            name="name"
-            required
-            placeholder="NAME"
-            className="w-full bg-surface border border-white/10 px-4 py-4 focus:outline-none focus:border-accent transition-colors text-xs font-bold tracking-widest placeholder:text-muted-foreground"
-          />
-          <input
-            type="email"
-            name="email"
-            required
-            placeholder="EMAIL"
-            className="w-full bg-surface border border-white/10 px-4 py-4 focus:outline-none focus:border-accent transition-colors text-xs font-bold tracking-widest placeholder:text-muted-foreground"
-          />
-        </div>
-        <textarea
-          name="message"
-          required
-          rows={5}
-          placeholder="TELL ME ABOUT YOUR PROJECT..."
-          className="w-full bg-surface border border-white/10 px-4 py-4 focus:outline-none focus:border-accent transition-colors text-xs font-bold tracking-widest placeholder:text-muted-foreground resize-none"
-        />
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full py-4 bg-white text-black font-extrabold uppercase tracking-widest hover:bg-accent transition-colors disabled:opacity-60"
-        >
-          {submitting ? "Transmitting..." : "Initialize Project"}
-        </button>
-        {status && (
-          <p
-            role="status"
-            className={`text-xs font-bold tracking-widest uppercase px-4 py-3 border ${
-              status.ok
-                ? "text-accent border-accent/40 bg-accent/5"
-                : "text-red-400 border-red-500/40 bg-red-500/5"
-            }`}
-          >
-            {status.msg}
-          </p>
-        )}
-      </motion.form>
-
-      <div className="mt-16 pt-12 border-t border-white/5 flex justify-center gap-8 flex-wrap">
+      <div className="mt-10 pt-10 border-t border-white/5 flex justify-center gap-8 flex-wrap">
         {SOCIALS.map(({ label, href, Icon }) => (
           <a
             key={label}
