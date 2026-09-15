@@ -35,11 +35,13 @@ export function Contact() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, margin: "-60px" }}
         transition={{ duration: 0.5 }}
-        className="grid md:grid-cols-2 gap-4 mb-10"
+        className="grid md:grid-cols-2 gap-4 mb-8"
       >
         <a
-          href={`mailto:${c.email}`}
-          className="flex items-center gap-4 p-5 bg-surface border border-white/10 hover:border-accent/50 hover:bg-white/[0.02] transition-all group"
+          href="https://mail.google.com/mail/?view=cm&fs=1&to=ammarsidaiexpert@gmail.com"
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-4 p-5 bg-surface border border-white/10 hover:border-accent/50 hover:bg-white/[0.02] hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(204,255,0,0.12)] transition-all group"
         >
           <div className="size-10 grid place-items-center bg-accent/10 border border-accent/20 shrink-0">
             <Mail className="size-4 text-accent" />
@@ -54,10 +56,10 @@ export function Contact() {
           </div>
         </a>
         <a
-          href={`https://wa.me/${c.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent("Hi, I'm interested in your services")}`}
+          href="https://wa.me/923147666278"
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-4 p-5 bg-surface border border-white/10 hover:border-accent/50 hover:bg-white/[0.02] transition-all group"
+          className="flex items-center gap-4 p-5 bg-surface border border-white/10 hover:border-accent/50 hover:bg-white/[0.02] hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(204,255,0,0.12)] transition-all group"
         >
           <div className="size-10 grid place-items-center bg-accent/10 border border-accent/20 shrink-0">
             <Phone className="size-4 text-accent" />
@@ -72,59 +74,6 @@ export function Contact() {
           </div>
         </a>
       </motion.div>
-
-
-      <motion.form
-        onSubmit={handleSubmit}
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, margin: "-60px" }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-        className="space-y-6 text-left"
-      >
-        <div className="grid md:grid-cols-2 gap-6">
-          <input
-            type="text"
-            name="name"
-            required
-            placeholder="NAME"
-            className="w-full bg-surface border border-white/10 px-4 py-4 focus:outline-none focus:border-accent transition-colors text-xs font-bold tracking-widest placeholder:text-muted-foreground"
-          />
-          <input
-            type="email"
-            name="email"
-            required
-            placeholder="EMAIL"
-            className="w-full bg-surface border border-white/10 px-4 py-4 focus:outline-none focus:border-accent transition-colors text-xs font-bold tracking-widest placeholder:text-muted-foreground"
-          />
-        </div>
-        <textarea
-          name="message"
-          required
-          rows={5}
-          placeholder="TELL ME ABOUT YOUR PROJECT..."
-          className="w-full bg-surface border border-white/10 px-4 py-4 focus:outline-none focus:border-accent transition-colors text-xs font-bold tracking-widest placeholder:text-muted-foreground resize-none"
-        />
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full py-4 bg-white text-black font-extrabold uppercase tracking-widest hover:bg-accent transition-colors disabled:opacity-60"
-        >
-          {submitting ? "Transmitting..." : "Initialize Project"}
-        </button>
-        {status && (
-          <p
-            role="status"
-            className={`text-xs font-bold tracking-widest uppercase px-4 py-3 border ${
-              status.ok
-                ? "text-accent border-accent/40 bg-accent/5"
-                : "text-red-400 border-red-500/40 bg-red-500/5"
-            }`}
-          >
-            {status.msg}
-          </p>
-        )}
-      </motion.form>
 
       <div className="mt-16 pt-12 border-t border-white/5 flex justify-center gap-8 flex-wrap">
         {SOCIALS.map(({ label, href, Icon }) => (
