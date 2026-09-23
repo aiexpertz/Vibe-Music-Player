@@ -1,6 +1,12 @@
 import { motion } from "framer-motion";
 import { useSection } from "@/lib/site-content";
 
+const TRUST_POINTS: string[] = [
+  "Every project starts with a working demo, not just a pitch — you see the AI agent in action before you commit.",
+  "Direct access to me, not a support ticket queue — I build, deploy and maintain every system myself.",
+  "Built on real property data and real WhatsApp flows — not generic chatbot templates.",
+];
+
 export function Testimonials() {
   const { heading, items } = useSection("signal");
   const list = Array.isArray(items) ? items : [];
