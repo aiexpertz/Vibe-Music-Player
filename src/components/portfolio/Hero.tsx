@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useSection } from "@/lib/site-content";
+import logoAsset from "@/assets/vibe-lab-logo.png.asset.json";
 import { ParticleField } from "./ParticleField";
 
 const NAV_LINKS = [
@@ -14,7 +15,6 @@ const NAV_LINKS = [
 ];
 
 export function Nav() {
-  const branding = useSection("branding");
   const [open, setOpen] = useState(false);
 
   return (
@@ -22,16 +22,9 @@ export function Nav() {
       <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center bg-background/80 backdrop-blur-md border-b border-white/5">
         <a
           href="#home"
-          className="flex items-center gap-2 text-xl font-heading font-extrabold tracking-tighter italic shrink-0"
+          className="flex items-center shrink-0"
         >
-          {branding.logo_url && (
-            <img src={branding.logo_url} alt="Logo" className="h-7 w-auto" />
-          )}
-          <span>
-            {branding.brand_first}
-            <span className="text-accent">_</span>
-            {branding.brand_second}
-          </span>
+          <img src={logoAsset.url} alt="VIBE_LAB" className="h-9 w-auto object-contain sm:h-10" />
         </a>
         <div className="hidden lg:flex gap-6 text-xs font-medium tracking-wide uppercase">
           {NAV_LINKS.map((l) => (
@@ -83,11 +76,7 @@ export function Nav() {
               className="fixed top-0 right-0 z-[70] h-full w-[78%] max-w-sm bg-background border-l border-accent/20 lg:hidden flex flex-col"
             >
               <div className="flex justify-between items-center p-6 border-b border-white/10">
-                <span className="font-heading font-extrabold italic">
-                  {branding.brand_first}
-                  <span className="text-accent">_</span>
-                  {branding.brand_second}
-                </span>
+                <img src={logoAsset.url} alt="VIBE_LAB" className="h-9 w-auto object-contain" />
                 <button
                   type="button"
                   aria-label="Close menu"
