@@ -2,8 +2,10 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useSection } from "@/lib/site-content";
-import logoAsset from "@/assets/vibe-lab-logo.png.asset.json";
 import { ParticleField } from "./ParticleField";
+
+const LOGO_URL =
+  "https://vibe-code-nexus-48.lovable.app/__l5e/assets-v1/06290e9c-f11d-4aab-8012-b1bec03653e5/vibe-lab-logo.png";
 
 const NAV_LINKS = [
   { href: "#home", label: "Home" },
@@ -24,7 +26,7 @@ export function Nav() {
           href="#home"
           className="flex items-center shrink-0"
         >
-          <img src={logoAsset.url} alt="VIBE_LAB" className="h-9 w-auto object-contain sm:h-10" />
+          <img src={LOGO_URL} alt="VIBE_LAB" className="h-9 w-auto object-contain sm:h-10" />
         </a>
         <div className="hidden lg:flex gap-6 text-xs font-medium tracking-wide uppercase">
           {NAV_LINKS.map((l) => (
@@ -76,7 +78,7 @@ export function Nav() {
               className="fixed top-0 right-0 z-[70] h-full w-[78%] max-w-sm bg-background border-l border-accent/20 lg:hidden flex flex-col"
             >
               <div className="flex justify-between items-center p-6 border-b border-white/10">
-                <img src={logoAsset.url} alt="VIBE_LAB" className="h-9 w-auto object-contain" />
+                <img src={LOGO_URL} alt="VIBE_LAB" className="h-9 w-auto object-contain" />
                 <button
                   type="button"
                   aria-label="Close menu"
